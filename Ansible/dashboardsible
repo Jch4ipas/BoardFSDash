@@ -12,6 +12,7 @@
 
 cd "$(dirname "$0")"; cd "$(/bin/pwd)"
 
+
 git_current_branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
 case "$git_current_branch" in
     "") : ;;
@@ -55,6 +56,7 @@ inventories () {
 ###########################################################################
 
 mode=ansible-playbook
+setup_file=""
 
 while [ "$#" -gt 0 ]; do
     case "$1" in
@@ -64,11 +66,18 @@ while [ "$#" -gt 0 ]; do
         -m) mode=ansible
             ansible_args+=("-m")
             shift ;;
+        -rb|--relaunchbrowser)
+            setup_file="relaunchbrowser.yml"
+            shift ;;
         *)
             ansible_args+=("$1")
             shift ;;
     esac
 done
+
+if [ -n "$setup_file" ]; then
+    playbook_flags="$playbook_flags -e setup_file=$setup_file"
+fi
 
 # https://github.com/ansible/ansible/issues/32499, https://bugs.python.org/issue35219
 case "$(uname -s)" in

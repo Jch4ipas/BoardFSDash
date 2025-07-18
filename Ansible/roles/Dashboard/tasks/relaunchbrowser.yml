@@ -1,0 +1,13 @@
+- name: Close Chromium
+  shell: |
+    pkill -f chromium || true
+    pkill -f chromium-browser || true
+    pkill -f chrome || true
+  ignore_errors: true
+
+- name: Wait Chromium to be close
+  pause:
+    seconds: 3
+
+- name: Open the dashboard with Chromium
+  shell: nohup chromium-browser --kiosk "http://localhost:3000" > /dev/null 2>&1 &
