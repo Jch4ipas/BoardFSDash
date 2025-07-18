@@ -22,14 +22,14 @@ export default function Home() {
 
   const boxes1 = [
     { id: 1, width: 2, height: 4, content: <iframe src="https://actu.epfl.ch/" className="w-full h-full"></iframe>},
-    { id: 2, width: 2, height: 2, content: <a></a>  },
+    { id: 2, width: 2, height: 1, content: <Salleinfo room={"INN011"}></Salleinfo>  },
     { id: 3, width: 1, height: 1, content: <LatestWordPressVersion></LatestWordPressVersion>},
     { id: 4, width: 1, height: 1, content: <Clock></Clock> },
-    { id: 5, width: 2, height: 2, content: <NasaMedia></NasaMedia> },
-    { id: 6, width: 1, height: 1, content: <Salleinfo room={"INN011"}></Salleinfo>},
-    { id: 7, width: 1, height: 1, content: <Salleinfo room={"INN033"}></Salleinfo>},
+    { id: 5, width: 2, height: 1, content: <Salleinfo room={"INN033"}></Salleinfo>  },
+    { id: 6, width: 2, height: 2, content: <NasaMedia></NasaMedia> },
+    { id: 7, width: 2, height: 1, content: <Salleinfo room={"INN041"}></Salleinfo>},
     { id: 8, width: 1, height: 1},
-    { id: 9, width: 1, height: 1, content: <Salleinfo room={"INN041"}></Salleinfo>},
+    { id: 9, width: 1, height: 1, content: <></>},
     { id: 10, width: 2, height: 1, content: <NextFreeze></NextFreeze>},
   ];
 
