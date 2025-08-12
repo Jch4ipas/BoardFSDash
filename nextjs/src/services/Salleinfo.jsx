@@ -29,13 +29,13 @@ export default ({room}) => {
     }, [room])
     return (
         <div>
-            <span>Room : {room}</span><br />
+            <span className="flex flex-col items-center justify-center text-xl font-bold">Room : {room}</span><br />
+            <span>Date : {new Date().toLocaleDateString('fr-CH')}</span>
             {eventsData.length > 0 ? (
                 eventsData.reverse().slice(0, 2).map((event, index) => (
-                    <div key={index}>
-                        <span>début : {new Date(event.debut).toLocaleString('fr-CH')}</span><br></br>
-                        <span>fin : {new Date(event.fin).toLocaleString('fr-CH')}</span><br></br>
-                        <span>Sujet : {event.sujet}</span><br></br>
+                    <div key={index} className="grid">
+                        <span>{new Date(event.debut).toLocaleString('fr-CH', {hour:"numeric", minute:"numeric"})} - {new Date(event.fin).toLocaleString('fr-CH', {hour:"numeric", minute:"numeric"})}</span>
+                        <span>Sujet : {event.sujet}</span>
                         <span>organisateur : {event.organisateur}</span>
                         <hr />
                     </div>
