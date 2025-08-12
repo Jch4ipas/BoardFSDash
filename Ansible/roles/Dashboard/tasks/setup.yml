@@ -14,6 +14,25 @@
     msg: "Hello there I'm working"
   tags: sayHello
 
+- name: Ensure Chrome policy directory exists
+  file:
+    path: /etc/chromium/policies/managed/
+    state: directory
+    mode: '0755'
+  become: true
+
+- name: Add extension policy for Chrome
+  copy:
+    dest: /etc/chromium/policies/managed/extensions.json
+    content: |
+      {
+        "ExtensionInstallForcelist": [
+          "edibdbjcniadpccecjdfdjjppcpchdlm;https://clients2.google.com/service/update2/crx"
+        ]
+      }
+    mode: '0644'
+  become: true
+
 - name: Download Docker and Docker Compose
   apt:
     name:
