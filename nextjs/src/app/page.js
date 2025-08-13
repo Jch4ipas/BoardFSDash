@@ -10,6 +10,7 @@ import Salleinfo from "@/services/Salleinfo"
 export default function Home() {
 
   const [activeBoxSet, setActiveBoxSet] = useState(0);
+  const [refreshItem, setRefreshItem] = useState(0);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -19,9 +20,17 @@ export default function Home() {
     return () => clearInterval(intervalId);
   }, []);
 
+  useEffect(() => {
+    const refreshInterval = setInterval(() => {
+      setRefreshItem(prev => prev + 1);
+    }, 5 * 60 * 1000);
+
+    return () => clearInterval(refreshInterval);
+  }, []);
+
 
   const boxes1 = [
-    { id: 1, width: 2, height: 4, content: <iframe src="https://actu.epfl.ch/" className="w-full h-full"></iframe>},
+    { id: 1, width: 2, height: 4, content: <iframe key={refreshItem} src="https://actu.epfl.ch/?dashboardfr" className="w-full h-full"></iframe>},
     { id: 2, width: 2, height: 1, content: <Salleinfo room={"INN011"}></Salleinfo>  },
     { id: 3, width: 1, height: 1, content: <LatestWordPressVersion></LatestWordPressVersion>},
     { id: 4, width: 1, height: 1, content: <Clock></Clock> },
@@ -34,7 +43,7 @@ export default function Home() {
   ];
 
   const boxes2 = [
-    { id: 1, width: 5, height: 1, content: <p className="flex text-xl font-bold items-center justify-center">Hello World</p>  },
+    { id: 1, width: 5, height: 1, content: <video autoplay muted loop id="myVideo"></video>  },
     { id: 2, width: 1, height: 1, content: <Clock></Clock>},
     { id: 3, width: 6, height: 3, content: <h1>WPN</h1>},
   ];
