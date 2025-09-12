@@ -2,6 +2,13 @@
   tags:
     - alway
 
+# - name: Modify Exec line to force French
+#   lineinfile:
+#     path: /usr/share/applications/chromium.desktop
+#     regexp: '^Exec='
+#     line: "Exec=/usr/bin/chromium --lang=fr %U"
+#   become: true
+# Not working code
 - include_tasks:
     file: autostart.yml
 
@@ -32,6 +39,7 @@
 #       }
 #     mode: '0644'
 #   become: true
+# Not working code
 
 - name: Download Docker and Docker Compose
   apt:
