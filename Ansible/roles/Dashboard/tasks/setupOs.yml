@@ -1,0 +1,38 @@
+- include_tasks:
+    file: autostart.yml
+
+- name: Set timezone Europe/Zurich
+  command: sudo timedatectl set-timezone Europe/Zurich
+  become: true
+
+- name: Download Docker and Docker Compose
+  apt:
+    name:
+      - docker.io
+      - docker-compose
+    state: present
+    update_cache: yes
+  become: true
+
+- name: stop default webserver
+  command: sudo systemctl stop lighttpd
+  become: true
+
+- name: Disable default webserver
+  command: sudo systemctl disable lighttpd
+  become: true
+
+- name: Set system locale
+  become: true
+  lineinfile:
+    path: /etc/default/locale
+    regexp: '^LANG='
+    line: 'LANG=fr_CH.UTF-8'
+
+
+- name: Change web page
+  copy:
+    dest: /boot/firmware/fullpageos.txt
+    content: |
+      http://localhost:80
+  become: true

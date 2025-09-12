@@ -9,12 +9,6 @@
 #     line: "Exec=/usr/bin/chromium --lang=fr %U"
 #   become: true
 # Not working code
-- include_tasks:
-    file: autostart.yml
-
-- name: Set timezone Europe/Zurich
-  command: sudo timedatectl set-timezone Europe/Zurich
-  become: true
 
 - name: Say hello
   debug:
@@ -41,15 +35,6 @@
 #   become: true
 # Not working code
 
-- name: Download Docker and Docker Compose
-  apt:
-    name:
-      - docker.io
-      - docker-compose
-    state: present
-    update_cache: yes
-  become: true
-
 - name: Start Docker service
   systemd:
     name: docker
@@ -69,20 +54,6 @@
     path: /opt/prometheus
     state: directory
   become: true
-
-- name: Change web page
-  copy:
-    dest: /boot/firmware/fullpageos.txt
-    content: |
-      http://localhost:3000
-  become: true
-
-- name: Set system locale
-  become: true
-  lineinfile:
-    path: /etc/default/locale
-    regexp: '^LANG='
-    line: 'LANG=fr_CH.UTF-8'
 
 - name: Create env file
   copy:
