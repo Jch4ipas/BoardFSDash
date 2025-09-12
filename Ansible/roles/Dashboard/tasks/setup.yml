@@ -74,7 +74,7 @@
   copy:
     dest: /boot/firmware/fullpageos.txt
     content: |
-      localhost:3000
+      http://localhost:3000
   become: true
 
 - name: Set system locale
