@@ -155,7 +155,7 @@
             - "GF_SECURITY_ADMIN_PASSWORD=1234"
             - "GF_AUTH_ANONYMOUS_ENABLED=true"
         dashboard:
-          image: jchaipas/dashboardtvfsd
+          image: jchaipas/dashboardtvfsd:latest
           container_name: dashboard
           volumes:
              - "/opt/freezeDates.json:/app/public/freezeDates.json"
