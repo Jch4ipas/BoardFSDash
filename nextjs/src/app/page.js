@@ -47,8 +47,11 @@ export default function Home() {
     { id: 2, width: 1, height: 1, content: <Clock></Clock>},
     { id: 3, width: 6, height: 3, content: <h1>WPN</h1>},
   ];
+    const boxes3 = [
+    { id: 1, width: 6, height: 4, content: <iframe src="https://sdesk-monitoring.epfl.ch/" className="w-full h-full"></iframe>  }
+  ];
 
-  const allBoxSets = [boxes1];
+  const allBoxSets = [boxes1, boxes3];
   const currentBoxes = allBoxSets[activeBoxSet];
 
   return (
