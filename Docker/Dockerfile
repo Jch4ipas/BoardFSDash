@@ -1,7 +1,7 @@
 # =========================
 # 1. Base image
 # =========================
-FROM --platform=linux/arm64 node:22-alpine AS base
+FROM node:22-alpine AS base
 
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NEXT_DISABLE_ESLINT=true
