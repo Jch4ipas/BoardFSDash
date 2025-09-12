@@ -9,7 +9,7 @@
 
 - name: Créer un fichier docker-compose.sh
   copy:
-    dest: /home/dashboard/docker-compose.sh
+    dest: /home/{{ ansible_user }}/docker-compose.sh
     content: |
       #!/bin/bash
       sudo docker-compose -f /opt/docker-compose.yml up -d
@@ -18,12 +18,12 @@
 
 - name: Créer le dossier autostart s'il n'existe pas
   file:
-    path: /home/dashboard/.config/autostart
+    path: /home/{{ ansible_user }}/.config/autostart
     state: directory
-    owner: dashboard
-    group: dashboard
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     mode: '0755'
-
+  become: true
 
 - name: Créer un fichier chromium-kiosk.desktop
   copy:
@@ -43,16 +43,16 @@
 
 - name: Créer un fichier dashboard.desktop
   copy:
-    dest: /home/dashboard/.config/autostart/dashboard.desktop
+    dest: /home/{{ ansible_user }}/.config/autostart/dashboard.desktop
     content: |
       [Desktop Entry]
       Type=Application
-      Exec=/home/dashboard/docker-compose.sh
+      Exec=/home/{{ ansible_user }}/docker-compose.sh
       Hidden=false
       NoDisplay=false
       X-GNOME-Autostart-enabled=true
       Name=Start docker
       Comment=Start docker
-    owner: dashboard
-    group: dashboard
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     mode: '0644'
