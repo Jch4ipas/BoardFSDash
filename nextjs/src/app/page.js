@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import NasaMedia from "@/services/infonasa"
+import NasaMedia from "@/services/infonasa";
 import Clock from "@/components/Clock";
 import LatestWordPressVersion from "@/services/wordpresslastversion";
 import NextFreeze from "@/components/freeze";
-import Salleinfo from "@/services/Salleinfo"
+import Salleinfo from "@/services/Salleinfo";
 
 export default function Home() {
 
@@ -29,7 +29,7 @@ export default function Home() {
   }, []);
 
 
-  const boxes1 = [
+  const box1 = [
     { id: 1, width: 2, height: 4, content: <iframe key={refreshItem} src="https://actu.epfl.ch/?dashboardfr" className="w-full h-full"></iframe>},
     { id: 2, width: 2, height: 1, content: <Salleinfo room={"INN011"}></Salleinfo>  },
     { id: 3, width: 1, height: 1, content: <LatestWordPressVersion></LatestWordPressVersion>},
@@ -42,36 +42,36 @@ export default function Home() {
     { id: 10, width: 2, height: 1, content: <NextFreeze></NextFreeze>},
   ];
 
-  const boxes2 = [
+  const box2 = [
     { id: 1, width: 5, height: 1, content: <video autoplay muted loop id="myVideo"></video>  },
     { id: 2, width: 1, height: 1, content: <Clock></Clock>},
     { id: 3, width: 6, height: 3, content: <h1>WPN</h1>},
   ];
-    const boxes3 = [
+    const box3 = [
     { id: 1, width: 6, height: 4, content: <iframe src="https://sdesk-monitoring.epfl.ch/" className="w-full h-full"></iframe>  }
   ];
 
-  const allBoxSets = [boxes1, boxes3];
+  const allBoxSets = [box1, box3];
   const currentBoxes = allBoxSets[activeBoxSet];
 
   return (
-    <div className="h-screen w-full">
-      <div className="grid grid-cols-6 grid-rows-4 gap-2 w-full h-full p-2">
-        {currentBoxes.map((box) => (
-          <div
-            key={box.id}
-            className="border border-gray-600 rounded-3xl flex justify-center items-center text-white font-bold shadow-md p-2"
-            style={{
-              gridColumn: `span ${box.width}`,
-              gridRow: `span ${box.height}`,
-            }}
-          >
-            <div className="w-full h-full flex items-center justify-center overflow-hidden rounded-2xl">
-              {box.content}
+      <div className="h-screen w-full">
+        <div className="grid grid-cols-6 grid-rows-4 gap-2 w-full h-full p-2">
+          {currentBoxes.map((box) => (
+            <div
+              key={box.id}
+              className="border border-gray-600 rounded-3xl flex justify-center items-center text-white font-bold shadow-md p-2"
+              style={{
+                gridColumn: `span ${box.width}`,
+                gridRow: `span ${box.height}`,
+              }}
+            >
+              <div className="w-full h-full flex items-center justify-center overflow-hidden rounded-2xl">
+                {box.content}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
   );
 }
