@@ -1,14 +1,15 @@
-"use server";
-
-import fs from "fs";
-import path from "path";
+"use client";
 
 export async function loadData() {
-  const filePath = path.join(process.cwd(), "data", "data.json");
-  if (!fs.existsSync(filePath)) {
+  try {
+    const response = await fetch(`/api/jsonConfig`);
+    if (!response.ok) {
+        throw new Error(`Response status: ${response}`);
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Erreur lors de la récupération des événements :",error.message);
     return [];
   }
-
-  const raw = fs.readFileSync(filePath, "utf-8");
-  return JSON.parse(raw);
 }
