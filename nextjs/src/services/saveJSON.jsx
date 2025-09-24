@@ -1,14 +1,22 @@
-"use server";
-
-import fs from "fs";
-import path from "path";
+"use client";
 
 export async function saveData(data) {
-    const dirPath = path.join(process.cwd(), "data");
-    const filePath = path.join(dirPath, "data.json");
-    if (!fs.existsSync(dirPath)) {
-        fs.mkdirSync(dirPath, { recursive: true });
+  try {
+    const response = await fetch(`/api/jsonConfig`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+      return false;
+    } else if (response.ok) {
+        return true;
     }
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
-    return true;
+  } catch (error) {
+    console.error("Erreur lors de la sauvegarde des données :", error.message);
+    return false;
+  }
 }
