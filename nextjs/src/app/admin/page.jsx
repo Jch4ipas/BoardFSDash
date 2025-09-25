@@ -10,20 +10,26 @@ import LatestWordPressVersion from "@/services/wordpresslastversion";
 import NextFreeze from "@/components/freeze";
 import Salleinfo from "@/services/Salleinfo";
 
-export default function BackOffice(){
-    const [ boxe, setBoxe] = useState([]);
-    const [ boxSerializable, setBoxSerializable] = useState([]);
+export default function BackOffice() {
+    const [boxe, setBoxe] = useState([]);
+    const [boxSerializable, setBoxSerializable] = useState([]);
+    const [activeBox, setActiveBox] = useState(1);
+    const [selectedBox, setSelectedBox] = useState(boxSerializable.find(box => box.id === activeBox));
+    const [allBoxSets, setAllBoxSets] = useState([]);
+    const [currentBoxes, setCurrentBoxes] = useState([]);
+    // const allBoxSets = [boxe];
+    // const currentBoxes = allBoxSets[activeBoxSet];
     const box1 = [
-        { id: 1, width: 2, height: 4, content: <iframe src="https://actu.epfl.ch/?dashboardfr" className="w-full h-full"></iframe>},
-        { id: 2, width: 2, height: 1, content: <Salleinfo room={"INN011"}></Salleinfo>  },
-        { id: 3, width: 1, height: 1, content: <LatestWordPressVersion></LatestWordPressVersion>},
+        { id: 1, width: 2, height: 4, content: <iframe src="https://actu.epfl.ch/?dashboardfr" className="w-full h-full"></iframe> },
+        { id: 2, width: 2, height: 1, content: <Salleinfo room={"INN011"}></Salleinfo> },
+        { id: 3, width: 1, height: 1, content: <LatestWordPressVersion></LatestWordPressVersion> },
         { id: 4, width: 1, height: 1, content: <Clock></Clock> },
-        { id: 5, width: 2, height: 1, content: <Salleinfo room={"INN033"}></Salleinfo>  },
+        { id: 5, width: 2, height: 1, content: <Salleinfo room={"INN033"}></Salleinfo> },
         { id: 6, width: 2, height: 2, content: <NasaMedia></NasaMedia> },
-        { id: 7, width: 2, height: 1, content: <Salleinfo room={"INN041"}></Salleinfo>},
-        { id: 8, width: 1, height: 1},
-        { id: 9, width: 1, height: 1, content: <></>},
-        { id: 10, width: 2, height: 1, content: <NextFreeze></NextFreeze>},
+        { id: 7, width: 2, height: 1, content: <Salleinfo room={"INN041"}></Salleinfo> },
+        { id: 8, width: 1, height: 1 },
+        { id: 9, width: 1, height: 1, content: <></> },
+        { id: 10, width: 2, height: 1, content: <NextFreeze></NextFreeze> },
     ];
     useEffect(() => {
         setBoxSerializable([
@@ -40,42 +46,315 @@ export default function BackOffice(){
         ]);
         handleLoad();
     }, [])
+    useEffect(() => {
+        setSelectedBox(boxSerializable.find(box => box.id === activeBox));
+    }, [activeBox])
+    useEffect(() => {
+        if (boxSerializable.length > 0 && !boxSerializable.some(box => box.id === activeBox)) {
+            setActiveBox(boxSerializable[0].id);
+        }
+
+        setBoxe(buildBoxes(boxSerializable));
+    }, [boxSerializable]);
+
+    useEffect(() => {
+    if (boxSerializable.length > 0 && activeBox) {
+            const found = boxSerializable.find(box => box.id === activeBox);
+            setSelectedBox(found || null);
+        }
+    }, [boxSerializable, activeBox]);
 
     const handleSave = async (array) => {
-        if(await saveData(array)) {
+        if (await saveData(array)) {
             alert("Save !!");
         }
-        
+
     }
     const handleLoad = async () => {
         const res = await loadData();
         console.log(res);
-        setBoxe(res);
+        setBoxSerializable(res);
         setBoxe(buildBoxes(res));
     }
-    return(
-        <div className="flex justify-center items-center">
-        
-            <h1>
-                <input className="btn" placeholder="Save" type="button" onClick={() => handleSave(boxSerializable)}/>
-            </h1>
-            <h1>
-                <input className="btn" placeholder="Load" type="button" onClick={() => handleLoad()}/>
-            </h1>
-            {boxe.map((box) => (
-                <div
-                key={box.id}
-                className="border border-gray-600 rounded-3xl flex justify-center items-center text-white font-bold shadow-md p-2"
-                style={{
-                    gridColumn: `span ${box.width}`,
-                    gridRow: `span ${box.height}`,
-                }}
+    const handleNewBox = () => {
+        const lastId = boxSerializable.length > 0
+            ? Math.max(...boxSerializable.map(box => box.id))
+            : 0;
+        const newBox = { id: lastId + 1, width: 1, height: 1, type: "" };
+        const updatedBoxes = [...boxSerializable, newBox];
+        setBoxSerializable(updatedBoxes);
+        setBoxe(buildBoxes(updatedBoxes));
+        console.log("New Box");
+    };
+    const handleDeleteBox = () => {
+        // const updated = boxSerializable.filter((box) => box.id !== activeBox);
+
+        // const reindexed = updated.map((box, index) => ({
+        //     ...box,
+        //     id: index + 1,
+        // }));
+        setBoxSerializable(boxSerializable.filter((box) => box.id !== activeBox));
+        setBoxe(buildBoxes(boxSerializable));
+    };
+    const handleUpdateBox = () => {
+        setBoxSerializable(boxSerializable.map(box => box.id === activeBox ? selectedBox : box));
+        setBoxe(buildBoxes(boxSerializable));
+        console.log("Update Box");
+    };
+
+
+    return (
+        <div className="min-h-screen flex flex-col bg-base-200">
+            <div className="h-[6vh] flex items-center gap-4 px-4">
+                <button
+                    className="btn h-full aspect-square rounded-md btn-ghost"
+                    aria-label="Add"
                 >
-                <div className="w-full h-full flex items-center justify-center overflow-hidden rounded-2xl">
-                    {box.content}
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={2}
+                        stroke="currentColor"
+                        className="w-5 h-5"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M12 4v16m8-8H4"
+                        />
+                    </svg>
+                </button>
+                <div className="dropdown w-[20%] h-full">
+                    <label tabIndex={0} className="btn h-full w-full justify-between rounded-md">
+                        <span className="truncate">Dropdown A</span>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="ml-2 h-4 w-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M19 9l-7 7-7-7"
+                            />
+                        </svg>
+                    </label>
+                    <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box mt-2 w-[20%]">
+                        <li>
+                            <a>Option 1</a>
+                        </li>
+                        <li>
+                            <a>Option 2</a>
+                        </li>
+                        <li>
+                            <a>Option 3</a>
+                        </li>
+                    </ul>
                 </div>
+                <button
+                    className="btn h-full aspect-square rounded-md btn-ghost"
+                    aria-label="Delete"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={2}
+                        stroke="currentColor"
+                        className="w-5 h-5"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3"
+                        />
+                    </svg>
+                </button>
+
+                <div className="dropdown w-[20%] h-full">
+                    <label tabIndex={0} className="btn h-full w-full justify-between rounded-md">
+                        <span className="truncate">Dropdown B</span>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="ml-2 h-4 w-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M19 9l-7 7-7-7"
+                            />
+                        </svg>
+                    </label>
+                    <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box mt-2 w-[20%]">
+                        <li>
+                            <a>Option A</a>
+                        </li>
+                        <li>
+                            <a>Option B</a>
+                        </li>
+                        <li>
+                            <a>Option C</a>
+                        </li>
+                    </ul>
                 </div>
-            ))}
+                <button
+                    className="btn h-full aspect-square rounded-md btn-ghost"
+                    aria-label="Add"
+                    onClick={handleSave}
+                >
+                    Save
+                </button>
+            </div>
+            <main className="h-[calc(100vh-10vh)] flex gap-4 p-4">
+                <div className="w-[30%] flex flex-col gap-4">
+                    <div className="flex-1 rounded-lg p-4 bg-base-100">
+                        <h2 className="text-lg font-semibold">Box 1</h2>
+                    </div>
+                    <div className="flex-1 rounded-lg p-4 bg-base-100">
+                        <div className="flex items-center justify-between mb-4">
+                            <h2 className="text-lg font-semibold">{activeBox}</h2>
+                            <div className="flex items-center gap-2">
+                                <button
+                                    className="btn h-full aspect-square rounded-md btn-ghost"
+                                    aria-label="Add"
+                                    onClick={handleUpdateBox}
+                                >
+                                    Apply
+                                </button>
+                                <button onClick={handleNewBox} className="btn btn-circle btn-primary btn-sm" title="Ajouter">+</button>
+                                <div className="dropdown dropdown-end">
+                                    <label tabIndex={0} className="btn btn-circle btn-ghost btn-sm">
+                                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                                            <circle cx="4" cy="10" r="2" />
+                                            <circle cx="10" cy="10" r="2" />
+                                            <circle cx="16" cy="10" r="2" />
+                                        </svg>
+                                    </label>
+                                    <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-40">
+                                        {boxSerializable.map((box) => (
+                                            <li
+                                                key={box.id}
+                                                style={{
+                                                    gridColumn: `span ${box.width}`,
+                                                    gridRow: `span ${box.height}`,
+                                                }}
+                                                onClick={() => setActiveBox(box.id)}
+                                            >
+                                                <a className="w-full h-full flex items-center justify-center overflow-hidden rounded-2xl">
+                                                    {box.id}
+                                                </a>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                                <button className="btn btn-circle btn-error btn-sm" title="Supprimer" onClick={handleDeleteBox}>
+                                    <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                        <path d="M3 6h18M8 6v12a2 2 0 002 2h4a2 2 0 002-2V6M10 11v6M14 11v6" />
+                                        <rect x="9" y="3" width="6" height="3" rx="1" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div className="flex flex-col gap-4">
+                            <div className="form-control w-full">
+                                <label className="label">
+                                    <span className="label-text font-medium">Width</span>
+                                </label>
+                                <input
+                                    value={selectedBox?.width || ''}
+                                    onChange={(e) => {
+                                        setSelectedBox(
+                                            { ...selectedBox, width: e.target.value }
+                                        );
+                                    }}
+                                    type="number" placeholder="width" className="input input-bordered input-primary w-full" />
+                            </div>
+                            <div className="form-control w-full">
+                                <label className="label">
+                                    <span className="label-text font-medium">Height</span>
+                                </label>
+                                <input
+                                    value={selectedBox?.height || ''}
+                                    onChange={(e) => {
+                                        setSelectedBox(
+                                            { ...selectedBox, height: e.target.value }
+                                        );
+                                    }}
+                                    type="number"
+                                    placeholder="height"
+                                    className="input input-bordered input-primary w-full" />
+                            </div>
+                            <div className="form-control w-full">
+                                <label className="label">
+                                    <span className="label-text font-medium">X</span>
+                                </label>
+                                <input disabled type="number" placeholder="x" className="input input-bordered input-primary w-full" />
+                            </div>
+                            <div className="form-control w-full">
+                                <label className="label">
+                                    <span className="label-text font-medium">Y</span>
+                                </label>
+                                <input disabled type="number" placeholder="y" className="input input-bordered input-primary w-full" />
+                            </div>
+                            <div className="form-control w-full">
+                                <label className="label">
+                                    <span className="label-text font-medium">Content</span>
+                                </label>
+                                <textarea value={selectedBox?.type || ""} onChange={(e) => {
+                                    setSelectedBox(
+                                        { ...selectedBox, type: e.target.value }
+                                    );
+                                }} className="textarea textarea-bordered textarea-primary w-full" placeholder="Contents"></textarea>
+                            </div>
+                            {selectedBox?.props &&
+                                <div className="flex flex-wrap gap-4">
+                                    {Object.entries(selectedBox.props).map(([key, value]) => (
+                                        <div className="flex items-center gap-2" key={key}>
+                                            <label className="font-medium">{key}:</label>
+                                            <input value={value} onChange={(e) => {
+                                                setSelectedBox(
+                                                    { ...selectedBox, props: { ...selectedBox.props, [key]: e.target.value } }
+                                                );
+                                            }} className="input input-bordered input-primary w-auto max-w-[120px]" placeholder="Props"></input>
+                                        </div>
+                                    ))}
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div className="w-[70%] flex flex-col gap-4">
+                    <div className="flex-1 rounded-lgbg-base-100">
+                        <h2 className="text-lg font-semibold"></h2>
+                    </div>
+                    <div className="w-[100%] rounded-lg p-4 bg-base-100 h-[70%]">
+                        <div className="grid grid-cols-6 grid-rows-4 gap-2 w-full h-full p-2">
+                            {boxe.map((box) => (
+                                <div
+                                    key={box.id}
+                                    className="border border-gray-600 rounded-3xl flex justify-center items-center text-white font-bold shadow-md p-2"
+                                    style={{
+                                        gridColumn: `span ${box.width}`,
+                                        gridRow: `span ${box.height}`,
+                                    }}
+                                >
+                                    <div className="w-full h-full flex items-center justify-center overflow-hidden rounded-2xl">
+                                        {box.content}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </main>
         </div>
     );
 }
