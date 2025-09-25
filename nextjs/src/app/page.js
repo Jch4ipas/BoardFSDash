@@ -1,5 +1,7 @@
 "use client";
 
+import { loadData } from "@/services/loadJSON";
+import { buildBoxes } from "@/components/buildBoxe"
 import { useState, useEffect } from "react";
 import NasaMedia from "@/services/infonasa";
 import Clock from "@/components/Clock";
@@ -9,9 +11,16 @@ import Salleinfo from "@/services/Salleinfo";
 
 export default function Home() {
 
+  const [ boxe, setBoxe] = useState([]);
   const [activeBoxSet, setActiveBoxSet] = useState(0);
   const [refreshItem, setRefreshItem] = useState(0);
 
+  const handleLoad = async () => {
+      const res = await loadData();
+      console.log(res);
+      setBoxe(res);
+      setBoxe(buildBoxes(res));
+  }
   useEffect(() => {
     const intervalId = setInterval(() => {
       setActiveBoxSet((prev) => (prev + 1) % allBoxSets.length);
@@ -27,7 +36,9 @@ export default function Home() {
 
     return () => clearInterval(refreshInterval);
   }, []);
-
+  useEffect(() => {
+    handleLoad();
+  }, []);
 
   const box1 = [
     { id: 1, width: 2, height: 4, content: <iframe key={refreshItem} src="https://actu.epfl.ch/?dashboardfr" className="w-full h-full"></iframe>},
