@@ -68,7 +68,6 @@ export default function BackOffice() {
         if (await saveData(array)) {
             alert("Save !!");
         }
-
     }
     const handleLoad = async () => {
         const res = await loadData();
@@ -208,7 +207,7 @@ export default function BackOffice() {
                 <button
                     className="btn h-full aspect-square rounded-md btn-ghost"
                     aria-label="Add"
-                    onClick={handleSave}
+                    onClick={() => handleSave(boxSerializable)}
                 >
                     Save
                 </button>
