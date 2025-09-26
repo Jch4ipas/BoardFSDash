@@ -33,12 +33,12 @@ export default function BackOffice() {
         { id: 10, width: 2, height: 1, content: <NextFreeze></NextFreeze> },
     ];
     const box2 = [
-        { id: 1, width: 5, height: 1, content: <video autoplay muted loop id="myVideo"></video>  },
-        { id: 2, width: 1, height: 1, content: <Clock></Clock>},
-        { id: 3, width: 6, height: 3, content: <h1>WPN</h1>},
+        { id: 1, width: 5, height: 1, content: <video autoplay muted loop id="myVideo"></video> },
+        { id: 2, width: 1, height: 1, content: <Clock></Clock> },
+        { id: 3, width: 6, height: 3, content: <h1>WPN</h1> },
     ];
-        const box3 = [
-        { id: 1, width: 6, height: 4, content: <iframe src="https://sdesk-monitoring.epfl.ch/" className="w-full h-full"></iframe>  }
+    const box3 = [
+        { id: 1, width: 6, height: 4, content: <iframe src="https://sdesk-monitoring.epfl.ch/" className="w-full h-full"></iframe> }
     ];
     useEffect(() => {
         setBoxSerializable([[
@@ -127,7 +127,7 @@ export default function BackOffice() {
     };
     const handleUpdateBox = () => {
         const updatedContainer = currentContainer.map(box => box.id === activeBox ? selectedBox : box);
-        console.log("L'index "+currentContainer.index);
+        console.log("L'index " + currentContainer.index);
         setBoxSerializable(prev =>
             prev.map((container, index) =>
                 index === selectedContainer ? updatedContainer : container
@@ -261,129 +261,129 @@ export default function BackOffice() {
                         <h2 className="text-lg font-semibold">Box 1</h2>
                     </div>
                     <div className="flex-1 rounded-lg p-4 bg-base-100">
-                    {currentContainer.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center h-full">
-                            <h2>Vous n'avez aucune box actuellement</h2><br />
-                            <button
-                                onClick={handleNewBox}
-                                className="btn btn-primary"
-                            >
-                                Ajouter une box
-                            </button>
-                        </div>
-                    ) : (
-                        <>
-                            <div className="flex items-center justify-between mb-4">
-                                <h2 className="text-lg font-semibold">{activeBox}</h2>
-                                <div className="flex items-center gap-2">
-                                    <button
-                                        className="btn h-full aspect-square rounded-md btn-ghost"
-                                        aria-label="Add"
-                                        onClick={handleUpdateBox}
-                                    >
-                                        Apply
-                                    </button>
-                                    <button onClick={handleNewBox} className="btn btn-circle btn-primary btn-sm" title="Ajouter">+</button>
-                                    <div className="dropdown dropdown-end">
-                                        <label tabIndex={0} className="btn btn-circle btn-ghost btn-sm">
-                                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-                                                <circle cx="4" cy="10" r="2" />
-                                                <circle cx="10" cy="10" r="2" />
-                                                <circle cx="16" cy="10" r="2" />
+                        {currentContainer.length === 0 ? (
+                            <div className="flex flex-col items-center justify-center h-full">
+                                <h2>Vous n'avez aucune box actuellement</h2><br />
+                                <button
+                                    onClick={handleNewBox}
+                                    className="btn btn-primary"
+                                >
+                                    Ajouter une box
+                                </button>
+                            </div>
+                        ) : (
+                            <>
+                                <div className="flex items-center justify-between mb-4">
+                                    <h2 className="text-lg font-semibold">{activeBox}</h2>
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            className="btn h-full aspect-square rounded-md btn-ghost"
+                                            aria-label="Add"
+                                            onClick={handleUpdateBox}
+                                        >
+                                            Apply
+                                        </button>
+                                        <button onClick={handleNewBox} className="btn btn-circle btn-primary btn-sm" title="Ajouter">+</button>
+                                        <div className="dropdown dropdown-end">
+                                            <label tabIndex={0} className="btn btn-circle btn-ghost btn-sm">
+                                                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                                                    <circle cx="4" cy="10" r="2" />
+                                                    <circle cx="10" cy="10" r="2" />
+                                                    <circle cx="16" cy="10" r="2" />
+                                                </svg>
+                                            </label>
+                                            <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-40">
+                                                {currentContainer.map((box) => (
+                                                    <li
+                                                        key={box.id}
+                                                        style={{
+                                                            gridColumn: `span ${box.width}`,
+                                                            gridRow: `span ${box.height}`,
+                                                        }}
+                                                        onClick={() => setActiveBox(box.id)}
+                                                    >
+                                                        <a className="w-full h-full flex items-center justify-center overflow-hidden rounded-2xl">
+                                                            {box.id}
+                                                        </a>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                        <button className="btn btn-circle btn-error btn-sm" title="Supprimer" onClick={handleDeleteBox}>
+                                            <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                                <path d="M3 6h18M8 6v12a2 2 0 002 2h4a2 2 0 002-2V6M10 11v6M14 11v6" />
+                                                <rect x="9" y="3" width="6" height="3" rx="1" />
                                             </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col gap-4">
+                                    <div className="form-control w-full">
+                                        <label className="label">
+                                            <span className="label-text font-medium">Width</span>
                                         </label>
-                                        <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-40">
-                                            {currentContainer.map((box) => (
-                                                <li
-                                                    key={box.id}
-                                                    style={{
-                                                        gridColumn: `span ${box.width}`,
-                                                        gridRow: `span ${box.height}`,
-                                                    }}
-                                                    onClick={() => setActiveBox(box.id)}
-                                                >
-                                                    <a className="w-full h-full flex items-center justify-center overflow-hidden rounded-2xl">
-                                                        {box.id}
-                                                    </a>
-                                                </li>
+                                        <input
+                                            value={selectedBox?.width || ''}
+                                            onChange={(e) => {
+                                                setSelectedBox(
+                                                    { ...selectedBox, width: e.target.value }
+                                                );
+                                            }}
+                                            type="number" placeholder="width" className="input input-bordered input-primary w-full" />
+                                    </div>
+                                    <div className="form-control w-full">
+                                        <label className="label">
+                                            <span className="label-text font-medium">Height</span>
+                                        </label>
+                                        <input
+                                            value={selectedBox?.height || ''}
+                                            onChange={(e) => {
+                                                setSelectedBox(
+                                                    { ...selectedBox, height: e.target.value }
+                                                );
+                                            }}
+                                            type="number"
+                                            placeholder="height"
+                                            className="input input-bordered input-primary w-full" />
+                                    </div>
+                                    <div className="form-control w-full">
+                                        <label className="label">
+                                            <span className="label-text font-medium">X</span>
+                                        </label>
+                                        <input disabled type="number" placeholder="x" className="input input-bordered input-primary w-full" />
+                                    </div>
+                                    <div className="form-control w-full">
+                                        <label className="label">
+                                            <span className="label-text font-medium">Y</span>
+                                        </label>
+                                        <input disabled type="number" placeholder="y" className="input input-bordered input-primary w-full" />
+                                    </div>
+                                    <div className="form-control w-full">
+                                        <label className="label">
+                                            <span className="label-text font-medium">Content</span>
+                                        </label>
+                                        <textarea value={selectedBox?.type || ""} onChange={(e) => {
+                                            setSelectedBox(
+                                                { ...selectedBox, type: e.target.value }
+                                            );
+                                        }} className="textarea textarea-bordered textarea-primary w-full" placeholder="Contents"></textarea>
+                                    </div>
+                                    {selectedBox?.props &&
+                                        <div className="flex flex-wrap gap-4">
+                                            {Object.entries(selectedBox.props).map(([key, value]) => (
+                                                <div className="flex items-center gap-2" key={key}>
+                                                    <label className="font-medium">{key}:</label>
+                                                    <input value={value} onChange={(e) => {
+                                                        setSelectedBox(
+                                                            { ...selectedBox, props: { ...selectedBox.props, [key]: e.target.value } }
+                                                        );
+                                                    }} className="input input-bordered input-primary w-auto max-w-[120px]" placeholder="Props"></input>
+                                                </div>
                                             ))}
-                                        </ul>
-                                    </div>
-                                    <button className="btn btn-circle btn-error btn-sm" title="Supprimer" onClick={handleDeleteBox}>
-                                        <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                                            <path d="M3 6h18M8 6v12a2 2 0 002 2h4a2 2 0 002-2V6M10 11v6M14 11v6" />
-                                            <rect x="9" y="3" width="6" height="3" rx="1" />
-                                        </svg>
-                                    </button>
+                                        </div>
+                                    }
                                 </div>
-                            </div>
-                            <div className="flex flex-col gap-4">
-                                <div className="form-control w-full">
-                                    <label className="label">
-                                        <span className="label-text font-medium">Width</span>
-                                    </label>
-                                    <input
-                                        value={selectedBox?.width || ''}
-                                        onChange={(e) => {
-                                            setSelectedBox(
-                                                { ...selectedBox, width: e.target.value }
-                                            );
-                                        }}
-                                        type="number" placeholder="width" className="input input-bordered input-primary w-full" />
-                                </div>
-                                <div className="form-control w-full">
-                                    <label className="label">
-                                        <span className="label-text font-medium">Height</span>
-                                    </label>
-                                    <input
-                                        value={selectedBox?.height || ''}
-                                        onChange={(e) => {
-                                            setSelectedBox(
-                                                { ...selectedBox, height: e.target.value }
-                                            );
-                                        }}
-                                        type="number"
-                                        placeholder="height"
-                                        className="input input-bordered input-primary w-full" />
-                                </div>
-                                <div className="form-control w-full">
-                                    <label className="label">
-                                        <span className="label-text font-medium">X</span>
-                                    </label>
-                                    <input disabled type="number" placeholder="x" className="input input-bordered input-primary w-full" />
-                                </div>
-                                <div className="form-control w-full">
-                                    <label className="label">
-                                        <span className="label-text font-medium">Y</span>
-                                    </label>
-                                    <input disabled type="number" placeholder="y" className="input input-bordered input-primary w-full" />
-                                </div>
-                                <div className="form-control w-full">
-                                    <label className="label">
-                                        <span className="label-text font-medium">Content</span>
-                                    </label>
-                                    <textarea value={selectedBox?.type || ""} onChange={(e) => {
-                                        setSelectedBox(
-                                            { ...selectedBox, type: e.target.value }
-                                        );
-                                    }} className="textarea textarea-bordered textarea-primary w-full" placeholder="Contents"></textarea>
-                                </div>
-                                {selectedBox?.props &&
-                                    <div className="flex flex-wrap gap-4">
-                                        {Object.entries(selectedBox.props).map(([key, value]) => (
-                                            <div className="flex items-center gap-2" key={key}>
-                                                <label className="font-medium">{key}:</label>
-                                                <input value={value} onChange={(e) => {
-                                                    setSelectedBox(
-                                                        { ...selectedBox, props: { ...selectedBox.props, [key]: e.target.value } }
-                                                    );
-                                                }} className="input input-bordered input-primary w-auto max-w-[120px]" placeholder="Props"></input>
-                                            </div>
-                                        ))}
-                                    </div>
-                                }
-                            </div>
-                        </>
+                            </>
                         )}
                     </div>
                 </div>
