@@ -14,9 +14,10 @@ export default function BackOffice() {
     const [boxe, setBoxe] = useState([]);
     const [boxSerializable, setBoxSerializable] = useState([]);
     const [activeBox, setActiveBox] = useState(1);
-    const [selectedBox, setSelectedBox] = useState(boxSerializable.find(box => box.id === activeBox));
-    const [allBoxSets, setAllBoxSets] = useState([]);
-    const [currentBoxes, setCurrentBoxes] = useState([]);
+    const [selectedBox, setSelectedBox] = useState([]);
+    const [allContainersSets, setAllContainersSets] = useState([]);
+    const [currentContainer, setCurrentContainer] = useState([]);
+    const [selectedContainer, setSelectedContainer] = useState(0);
     // const allBoxSets = [boxe];
     // const currentBoxes = allBoxSets[activeBoxSet];
     const box1 = [
@@ -31,8 +32,16 @@ export default function BackOffice() {
         { id: 9, width: 1, height: 1, content: <></> },
         { id: 10, width: 2, height: 1, content: <NextFreeze></NextFreeze> },
     ];
+    const box2 = [
+        { id: 1, width: 5, height: 1, content: <video autoplay muted loop id="myVideo"></video>  },
+        { id: 2, width: 1, height: 1, content: <Clock></Clock>},
+        { id: 3, width: 6, height: 3, content: <h1>WPN</h1>},
+    ];
+        const box3 = [
+        { id: 1, width: 6, height: 4, content: <iframe src="https://sdesk-monitoring.epfl.ch/" className="w-full h-full"></iframe>  }
+    ];
     useEffect(() => {
-        setBoxSerializable([
+        setBoxSerializable([[
             { id: 1, width: 2, height: 4, type: "iframe", props: { src: "https://actu.epfl.ch/?dashboardfr", className: "w-full h-full" } },
             { id: 2, width: 2, height: 1, type: "Salleinfo", props: { room: "INN011" } },
             { id: 3, width: 1, height: 1, type: "LatestWordPressVersion" },
@@ -43,26 +52,42 @@ export default function BackOffice() {
             { id: 8, width: 1, height: 1, type: "" },
             { id: 9, width: 1, height: 1, type: "" },
             { id: 10, width: 2, height: 1, type: "NextFreeze" },
+        ], [
+            { id: 1, width: 5, height: 1, type: "video", props: { autoplay: true, muted: true, loop: true, id: "myVideo" } },
+            { id: 2, width: 1, height: 1, type: "Clock" },
+            { id: 3, width: 6, height: 3, type: "h1", props: { children: "WPN" } },
+        ], [
+            { id: 1, width: 6, height: 4, type: "iframe", props: { src: "https://sdesk-monitoring.epfl.ch/", className: "w-full h-full" } }
+        ]
         ]);
         handleLoad();
     }, [])
     useEffect(() => {
-        setSelectedBox(boxSerializable.find(box => box.id === activeBox));
+        if (
+            Array.isArray(boxSerializable) &&
+            boxSerializable.length > selectedContainer &&
+            Array.isArray(boxSerializable[selectedContainer])
+        ) {
+            setCurrentContainer(boxSerializable[selectedContainer]);
+            console.table(boxSerializable[selectedContainer]);
+        }
+    }, [boxSerializable, selectedContainer]);
+    useEffect(() => {
+        setSelectedBox(currentContainer.find(box => box.id === activeBox));
     }, [activeBox])
     useEffect(() => {
-        if (boxSerializable.length > 0 && !boxSerializable.some(box => box.id === activeBox)) {
-            setActiveBox(boxSerializable[0].id);
+        if (currentContainer.length > 0 && !currentContainer.some(box => box.id === activeBox)) {
+            setActiveBox(currentContainer[0].id);
         }
-
-        setBoxe(buildBoxes(boxSerializable));
-    }, [boxSerializable]);
+        setBoxe(buildBoxes(currentContainer));
+    }, [currentContainer]);
 
     useEffect(() => {
-    if (boxSerializable.length > 0 && activeBox) {
-            const found = boxSerializable.find(box => box.id === activeBox);
+        if (currentContainer.length > 0 && activeBox) {
+            const found = currentContainer.find(box => box.id === activeBox);
             setSelectedBox(found || null);
         }
-    }, [boxSerializable, activeBox]);
+    }, [currentContainer, activeBox]);
 
     const handleSave = async (array) => {
         if (await saveData(array)) {
@@ -71,17 +96,16 @@ export default function BackOffice() {
     }
     const handleLoad = async () => {
         const res = await loadData();
-        console.log(res);
         setBoxSerializable(res);
         setBoxe(buildBoxes(res));
     }
     const handleNewBox = () => {
-        const lastId = boxSerializable.length > 0
-            ? Math.max(...boxSerializable.map(box => box.id))
+        const lastId = currentContainer.length > 0
+            ? Math.max(...currentContainer.map(box => box.id))
             : 0;
         const newBox = { id: lastId + 1, width: 1, height: 1, type: "" };
-        const updatedBoxes = [...boxSerializable, newBox];
-        setBoxSerializable(updatedBoxes);
+        const updatedBoxes = [...currentContainer, newBox];
+        setCurrentContainer(updatedBoxes);
         setBoxe(buildBoxes(updatedBoxes));
         console.log("New Box");
     };
@@ -92,12 +116,12 @@ export default function BackOffice() {
         //     ...box,
         //     id: index + 1,
         // }));
-        setBoxSerializable(boxSerializable.filter((box) => box.id !== activeBox));
-        setBoxe(buildBoxes(boxSerializable));
+        setCurrentContainer(currentContainer.filter((box) => box.id !== activeBox));
+        setBoxe(buildBoxes(currentContainer));
     };
     const handleUpdateBox = () => {
-        setBoxSerializable(boxSerializable.map(box => box.id === activeBox ? selectedBox : box));
-        setBoxe(buildBoxes(boxSerializable));
+        setCurrentContainer(currentContainer.map(box => box.id === activeBox ? selectedBox : box));
+        setBoxe(buildBoxes(currentContainer));
         console.log("Update Box");
     };
 
@@ -126,7 +150,7 @@ export default function BackOffice() {
                 </button>
                 <div className="dropdown w-[20%] h-full">
                     <label tabIndex={0} className="btn h-full w-full justify-between rounded-md">
-                        <span className="truncate">Dropdown A</span>
+                        <span className="truncate">Containers</span>
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             className="ml-2 h-4 w-4"
@@ -142,16 +166,17 @@ export default function BackOffice() {
                             />
                         </svg>
                     </label>
-                    <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box mt-2 w-[20%]">
-                        <li>
-                            <a>Option 1</a>
-                        </li>
-                        <li>
-                            <a>Option 2</a>
-                        </li>
-                        <li>
-                            <a>Option 3</a>
-                        </li>
+                    <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-40">
+                        {boxSerializable.map((container, index) => (
+                            <li
+                                key={index}
+                                onClick={() => setSelectedContainer(index)}
+                            >
+                                <a className="w-full h-full flex items-center justify-center overflow-hidden rounded-2xl">
+                                    {index + 1}
+                                </a>
+                            </li>
+                        ))}
                     </ul>
                 </div>
                 <button
@@ -238,7 +263,7 @@ export default function BackOffice() {
                                         </svg>
                                     </label>
                                     <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-40">
-                                        {boxSerializable.map((box) => (
+                                        {currentContainer.map((box) => (
                                             <li
                                                 key={box.id}
                                                 style={{
@@ -336,9 +361,9 @@ export default function BackOffice() {
                     </div>
                     <div className="w-[100%] rounded-lg p-4 bg-base-100 h-[70%]">
                         <div className="grid grid-cols-6 grid-rows-4 gap-2 w-full h-full p-2">
-                            {boxe.map((box) => (
+                            {boxe.map((box, index) => (
                                 <div
-                                    key={box.id}
+                                    key={index}
                                     className="border border-gray-600 rounded-3xl flex justify-center items-center text-white font-bold shadow-md p-2"
                                     style={{
                                         gridColumn: `span ${box.width}`,
