@@ -124,6 +124,11 @@ export default function BackOffice() {
         setBoxe(buildBoxes(currentContainer));
         console.log("Update Box");
     };
+    const handleNewContainer = () => {
+        console.log("New Container");
+        setBoxSerializable([...boxSerializable, []]);
+        setSelectedContainer(boxSerializable.length);
+    };
 
 
     return (
@@ -132,6 +137,7 @@ export default function BackOffice() {
                 <button
                     className="btn h-full aspect-square rounded-md btn-ghost"
                     aria-label="Add"
+                    onClick={handleNewContainer}
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
