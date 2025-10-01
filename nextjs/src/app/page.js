@@ -11,14 +11,16 @@ import Salleinfo from "@/services/Salleinfo";
 
 export default function Home() {
 
-  const [ boxe, setBoxe] = useState([]);
-  const [activeBoxSet, setActiveBoxSet] = useState(0);
-  const [refreshItem, setRefreshItem] = useState(0);
+  const [ boxSerializable, setBoxSerializable ] = useState([]);
+  const [ boxe, setBoxe ] = useState([]);
+  const [ allBoxSets, setAllBoxSets ] = useState([0, 2]);
+  const [ activeBoxSet, setActiveBoxSet ] = useState(0);
+  const [ refreshItem, setRefreshItem ] = useState(0);
+  const [ selectedContainer, setSelectedContainer ] = useState([]);
 
   const handleLoad = async () => {
       const res = await loadData();
-      console.log(res);
-      setBoxe(res);
+      setBoxSerializable(res);
       setBoxe(buildBoxes(res));
   }
   useEffect(() => {
@@ -61,14 +63,20 @@ export default function Home() {
     const box3 = [
     { id: 1, width: 6, height: 4, content: <iframe src="https://sdesk-monitoring.epfl.ch/" className="w-full h-full"></iframe>  }
   ];
+  useEffect(() => {
+    if (boxe.length > 0) {
+      const theBoxe = boxSerializable[allBoxSets[activeBoxSet]];
+      // setSelectedContainer(theBoxe);
+      console.table(theBoxe)
+      setSelectedContainer(buildBoxes(theBoxe));
+    }
+  }, [boxe, activeBoxSet]);
 
-  const allBoxSets = [box1, box3];
-  const currentBoxes = allBoxSets[activeBoxSet];
 
   return (
       <div className="h-screen w-full">
         <div className="grid grid-cols-6 grid-rows-4 gap-2 w-full h-full p-2">
-          {currentBoxes.map((box) => (
+          {Array.isArray(selectedContainer) && selectedContainer.map((box) => (
             <div
               key={box.id}
               className="border border-gray-600 rounded-3xl flex justify-center items-center text-white font-bold shadow-md p-2"
