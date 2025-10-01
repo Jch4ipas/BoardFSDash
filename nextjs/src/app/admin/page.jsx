@@ -72,15 +72,27 @@ export default function BackOffice() {
             console.table(boxSerializable[selectedContainer]);
         }
     }, [boxSerializable, selectedContainer]);
+
     useEffect(() => {
         setSelectedBox(currentContainer.find(box => box.id === activeBox));
     }, [activeBox])
+
     useEffect(() => {
         if (currentContainer.length > 0 && !currentContainer.some(box => box.id === activeBox)) {
             setActiveBox(currentContainer[0].id);
         }
         setBoxe(buildBoxes(currentContainer));
     }, [currentContainer]);
+
+    useEffect(() => {
+        if (boxSerializable.length > 0 && !boxSerializable.some((box, index) => index === selectedContainer)) {
+            const lastIndex = currentContainer.length > 0
+                ? Math.min(...boxSerializable.map((box, index) => index))
+                : 0;
+            setSelectedContainer(lastIndex);
+        }
+        setBoxe(buildBoxes(currentContainer));
+    }, [boxSerializable]);
 
     useEffect(() => {
         if (currentContainer.length > 0 && activeBox) {
@@ -122,12 +134,16 @@ export default function BackOffice() {
         //     ...box,
         //     id: index + 1,
         // }));
-        setCurrentContainer(currentContainer.filter((box) => box.id !== activeBox));
-        setBoxe(buildBoxes(currentContainer));
+        const updatedContainer = currentContainer.filter((box) => box.id !== activeBox);
+        setBoxSerializable(prev =>
+            prev.map((container, index) =>
+                index === selectedContainer ? updatedContainer : container
+            )
+        );
+        setBoxe(buildBoxes(updatedContainer));
     };
     const handleUpdateBox = () => {
         const updatedContainer = currentContainer.map(box => box.id === activeBox ? selectedBox : box);
-        console.log("L'index " + currentContainer.index);
         setBoxSerializable(prev =>
             prev.map((container, index) =>
                 index === selectedContainer ? updatedContainer : container
@@ -140,6 +156,9 @@ export default function BackOffice() {
         console.log("New Container");
         setBoxSerializable([...boxSerializable, []]);
         setSelectedContainer(boxSerializable.length);
+    };
+    const handleDeleteContainer = () => {
+        setBoxSerializable(boxSerializable.filter((container, index) => index !== selectedContainer))
     };
 
 
@@ -200,6 +219,7 @@ export default function BackOffice() {
                 <button
                     className="btn h-full aspect-square rounded-md btn-ghost"
                     aria-label="Delete"
+                    onClick={handleDeleteContainer}
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
