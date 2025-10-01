@@ -17,6 +17,7 @@ export default function BackOffice() {
     const [selectedBox, setSelectedBox] = useState([]);
     const [allContainersSets, setAllContainersSets] = useState([]);
     const [currentContainer, setCurrentContainer] = useState([]);
+    const [currentContainerWithEverything, setCurrentContainerWithEverything] =  useState([]);
     const [selectedContainer, setSelectedContainer] = useState(0);
     // const allBoxSets = [boxe];
     // const currentBoxes = allBoxSets[activeBoxSet];
@@ -41,34 +42,33 @@ export default function BackOffice() {
         { id: 1, width: 6, height: 4, content: <iframe src="https://sdesk-monitoring.epfl.ch/" className="w-full h-full"></iframe> }
     ];
     useEffect(() => {
-        setBoxSerializable([[
-            { id: 1, width: 2, height: 4, type: "iframe", props: { src: "https://actu.epfl.ch/?dashboardfr", className: "w-full h-full" } },
-            { id: 2, width: 2, height: 1, type: "Salleinfo", props: { room: "INN011" } },
-            { id: 3, width: 1, height: 1, type: "LatestWordPressVersion" },
-            { id: 4, width: 1, height: 1, type: "Clock" },
-            { id: 5, width: 2, height: 1, type: "Salleinfo", props: { room: "INN033" } },
-            { id: 6, width: 2, height: 2, type: "NasaMedia" },
-            { id: 7, width: 2, height: 1, type: "Salleinfo", props: { room: "INN041" } },
-            { id: 8, width: 1, height: 1, type: "" },
-            { id: 9, width: 1, height: 1, type: "" },
-            { id: 10, width: 2, height: 1, type: "NextFreeze" },
-        ], [
-            { id: 1, width: 5, height: 1, type: "video", props: { autoplay: true, muted: true, loop: true, id: "myVideo" } },
-            { id: 2, width: 1, height: 1, type: "Clock" },
-            { id: 3, width: 6, height: 3, type: "h1", props: { children: "WPN" } },
-        ], [
-            { id: 1, width: 6, height: 4, type: "iframe", props: { src: "https://sdesk-monitoring.epfl.ch/", className: "w-full h-full" } }
-        ]
-        ]);
+        // setBoxSerializable([[
+        //     { id: 1, width: 2, height: 4, type: "iframe", props: { src: "https://actu.epfl.ch/?dashboardfr", className: "w-full h-full" } },
+        //     { id: 2, width: 2, height: 1, type: "Salleinfo", props: { room: "INN011" } },
+        //     { id: 3, width: 1, height: 1, type: "LatestWordPressVersion" },
+        //     { id: 4, width: 1, height: 1, type: "Clock" },
+        //     { id: 5, width: 2, height: 1, type: "Salleinfo", props: { room: "INN033" } },
+        //     { id: 6, width: 2, height: 2, type: "NasaMedia" },
+        //     { id: 7, width: 2, height: 1, type: "Salleinfo", props: { room: "INN041" } },
+        //     { id: 8, width: 1, height: 1, type: "" },
+        //     { id: 9, width: 1, height: 1, type: "" },
+        //     { id: 10, width: 2, height: 1, type: "NextFreeze" },
+        // ], [
+        //     { id: 1, width: 5, height: 1, type: "video", props: { autoplay: true, muted: true, loop: true, id: "myVideo" } },
+        //     { id: 2, width: 1, height: 1, type: "Clock" },
+        //     { id: 3, width: 6, height: 3, type: "h1", props: { children: "WPN" } },
+        // ], [
+        //     { id: 1, width: 6, height: 4, type: "iframe", props: { src: "https://sdesk-monitoring.epfl.ch/", className: "w-full h-full" } }
+        // ]
+        // ]);
         handleLoad();
     }, [])
     useEffect(() => {
         if (
-            Array.isArray(boxSerializable) &&
-            boxSerializable.length > selectedContainer &&
-            Array.isArray(boxSerializable[selectedContainer])
+            boxSerializable.length > selectedContainer
         ) {
-            setCurrentContainer(boxSerializable[selectedContainer]);
+            setCurrentContainerWithEverything(boxSerializable[selectedContainer]);
+            setCurrentContainer(boxSerializable[selectedContainer].boxes)
             console.table(boxSerializable[selectedContainer]);
         }
     }, [boxSerializable, selectedContainer]);
@@ -116,45 +116,48 @@ export default function BackOffice() {
             ? Math.max(...currentContainer.map(box => box.id))
             : 0;
         const newBox = { id: lastId + 1, width: 1, height: 1, type: "" };
-        const updatedBoxes = [...currentContainer, newBox];
-        setBoxSerializable(prev =>
-            prev.map((container, index) =>
-                index === selectedContainer ? updatedBoxes : container
-            )
-        );
-        setCurrentContainer(updatedBoxes);
-        // setBoxSerializable()
-        setBoxe(buildBoxes(updatedBoxes));
+        const updatedContainer = [...currentContainer, newBox];
+        handleUpdateContainer(updatedContainer);
+        // setCurrentContainer(updatedContainer);
+        setBoxe(buildBoxes(updatedContainer));
         console.log("New Box");
     };
     const handleDeleteBox = () => {
-        // const updated = boxSerializable.filter((box) => box.id !== activeBox);
-
-        // const reindexed = updated.map((box, index) => ({
-        //     ...box,
-        //     id: index + 1,
-        // }));
         const updatedContainer = currentContainer.filter((box) => box.id !== activeBox);
-        setBoxSerializable(prev =>
-            prev.map((container, index) =>
-                index === selectedContainer ? updatedContainer : container
-            )
-        );
+        handleUpdateContainer(updatedContainer);
+        // setBoxSerializable(prev =>
+        //     prev.map((container, index) =>
+        //         index === selectedContainer ? updatedContainer : container
+        //     )
+        // );
         setBoxe(buildBoxes(updatedContainer));
     };
     const handleUpdateBox = () => {
         const updatedContainer = currentContainer.map(box => box.id === activeBox ? selectedBox : box);
-        setBoxSerializable(prev =>
-            prev.map((container, index) =>
-                index === selectedContainer ? updatedContainer : container
-            )
-        ); // L'index de currentContainer est toujours undefined du coup ça marche pas et quand j'apply ça reste pareil
+        handleUpdateContainer(updatedContainer);
+        // setBoxSerializable(prev =>
+        //     prev.map((container, index) =>
+        //         index === selectedContainer ? updatedContainer : container
+        //     )
+        // ); // --------------------------------------------------------------------- here - i - work --------------------------------------------------------------------
         setBoxe(buildBoxes(updatedContainer));
         console.log("Update Box");
     };
+    const handleUpdateContainer = (thecurrentcontainer) => {
+        const updatedContainerWithEverything = { ...currentContainerWithEverything, boxes: thecurrentcontainer };
+        setBoxSerializable(prev =>
+            prev.map((container, index) =>
+                index === selectedContainer ? updatedContainerWithEverything : container
+            )
+        );
+        console.log("Update Container with everything");
+    };
     const handleNewContainer = () => {
         console.log("New Container");
-        setBoxSerializable([...boxSerializable, []]);
+        const lastId = boxSerializable.length > 0
+            ? Math.max(...boxSerializable.map(container => container.id))
+            : 0;
+        setBoxSerializable([...boxSerializable, { id: lastId + 1, name: "New Container", boxes: [] }]);
         setSelectedContainer(boxSerializable.length);
     };
     const handleDeleteContainer = () => {
@@ -203,14 +206,14 @@ export default function BackOffice() {
                             />
                         </svg>
                     </label>
-                    <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-40">
+                    <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-60 bg-slate-700">
                         {boxSerializable.map((container, index) => (
                             <li
                                 key={index}
                                 onClick={() => setSelectedContainer(index)}
                             >
                                 <a className="w-full h-full flex items-center justify-center overflow-hidden rounded-2xl">
-                                    {index + 1}
+                                    {container.name}
                                 </a>
                             </li>
                         ))}
@@ -278,7 +281,8 @@ export default function BackOffice() {
             <main className="h-[calc(100vh-10vh)] flex gap-4 p-4">
                 <div className="w-[30%] flex flex-col gap-4">
                     <div className="flex-1 rounded-lg p-4 bg-base-100">
-                        <h2 className="text-lg font-semibold">Box 1</h2>
+                        <h2 className="text-lg font-semibold"> {currentContainerWithEverything.name} </h2>
+                        <h2 className="text-sm text-gray-500"> ID: {currentContainerWithEverything.id} </h2>
                     </div>
                     <div className="flex-1 rounded-lg p-4 bg-base-100 overflow-y-auto">
                         {currentContainer.length === 0 ? (
