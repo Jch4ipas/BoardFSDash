@@ -18,6 +18,9 @@ export default function Home() {
   const [ refreshItem, setRefreshItem ] = useState(0);
   const [ selectedContainer, setSelectedContainer ] = useState([]);
 
+  useEffect(() => {
+    handleLoad();
+  }, []);
   const handleLoad = async () => {
       const res = await loadData();
       setBoxSerializable(res);
@@ -39,8 +42,14 @@ export default function Home() {
     return () => clearInterval(refreshInterval);
   }, []);
   useEffect(() => {
-    handleLoad();
-  }, []);
+    const evt = new EventSource("/api/events");
+    evt.onmessage = (event) => {
+      if (event.data === "update") {
+        handleLoad();
+      }
+    };
+    return () => evt.close();
+}, []);
 
   const box1 = [
     { id: 1, width: 2, height: 4, content: <iframe key={refreshItem} src="https://actu.epfl.ch/?dashboardfr" className="w-full h-full"></iframe>},
