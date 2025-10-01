@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { NextResponse } from "next/server";
+import { notifyClients } from "../events/route";
 
 
 export async function GET() {
@@ -29,5 +30,6 @@ export async function POST(request) {
         fs.mkdirSync(dirPath, { recursive: true });
     }
     fs.writeFileSync(filePath, JSON.stringify(body, null, 2));
+    notifyClients();
     return NextResponse.json({ success: true });
 }
