@@ -280,7 +280,7 @@ export default function BackOffice() {
                     <div className="flex-1 rounded-lg p-4 bg-base-100">
                         <h2 className="text-lg font-semibold">Box 1</h2>
                     </div>
-                    <div className="flex-1 rounded-lg p-4 bg-base-100">
+                    <div className="flex-1 rounded-lg p-4 bg-base-100 overflow-y-auto">
                         {currentContainer.length === 0 ? (
                             <div className="flex flex-col items-center justify-center h-full">
                                 <h2>Vous n'avez aucune box actuellement</h2><br />
@@ -312,7 +312,7 @@ export default function BackOffice() {
                                                     <circle cx="16" cy="10" r="2" />
                                                 </svg>
                                             </label>
-                                            <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-40">
+                                            <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-40 max-h-48 overflow-y-auto">
                                                 {currentContainer.map((box) => (
                                                     <li
                                                         key={box.id}
@@ -322,7 +322,7 @@ export default function BackOffice() {
                                                         }}
                                                         onClick={() => setActiveBox(box.id)}
                                                     >
-                                                        <a className="w-full h-full flex items-center justify-center overflow-hidden rounded-2xl">
+                                                        <a className="w-full h-full flex items-center justify-center rounded-2xl">
                                                             {box.id}
                                                         </a>
                                                     </li>
@@ -422,7 +422,6 @@ export default function BackOffice() {
                                         gridRow: `span ${box.height}`,
                                     }}
                                     onClick={() => setActiveBox(box.id)}
-                                    onMouse
                                 >
                                     <div className="w-full h-full flex items-center justify-center overflow-hidden rounded-2xl">
                                         {box.content}
