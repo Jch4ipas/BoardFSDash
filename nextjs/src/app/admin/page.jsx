@@ -416,11 +416,13 @@ export default function BackOffice() {
                             {boxe.map((box, index) => (
                                 <div
                                     key={index}
-                                    className="border border-gray-600 rounded-3xl flex justify-center items-center text-white font-bold shadow-md p-2"
+                                    className="border border-gray-600 rounded-3xl flex justify-center items-center text-white font-bold shadow-md p-2 cursor-pointer transition-all duration-150 hover:scale-105 hover:border-blue-500 hover:bg-blue-900/30"
                                     style={{
                                         gridColumn: `span ${box.width}`,
                                         gridRow: `span ${box.height}`,
                                     }}
+                                    onClick={() => setActiveBox(box.id)}
+                                    onMouse
                                 >
                                     <div className="w-full h-full flex items-center justify-center overflow-hidden rounded-2xl">
                                         {box.content}
