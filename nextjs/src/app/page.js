@@ -12,7 +12,7 @@ import Salleinfo from "@/services/Salleinfo";
 export default function Home() {
 
   const [ boxSerializable, setBoxSerializable ] = useState([]);
-  const [ boxe, setBoxe ] = useState([]);
+  const [ waitLoad, setWaitLoad ] = useState(false);
   const [ allBoxSets, setAllBoxSets ] = useState([0, 2]);
   const [ activeBoxSet, setActiveBoxSet ] = useState(0);
   const [ refreshItem, setRefreshItem ] = useState(0);
@@ -24,7 +24,7 @@ export default function Home() {
   const handleLoad = async () => {
       const res = await loadData();
       setBoxSerializable(res);
-      setBoxe(buildBoxes(res));
+      setWaitLoad(true);
   }
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -73,13 +73,13 @@ export default function Home() {
     { id: 1, width: 6, height: 4, content: <iframe src="https://sdesk-monitoring.epfl.ch/" className="w-full h-full"></iframe>  }
   ];
   useEffect(() => {
-    if (boxe.length > 0) {
+    if (waitLoad) {
       const theBoxe = boxSerializable[allBoxSets[activeBoxSet]];
       // setSelectedContainer(theBoxe);
       console.table(theBoxe)
-      setSelectedContainer(buildBoxes(theBoxe));
+      setSelectedContainer(buildBoxes(theBoxe.boxes));
     }
-  }, [boxe, activeBoxSet]);
+  }, [waitLoad, activeBoxSet]);
 
 
   return (
