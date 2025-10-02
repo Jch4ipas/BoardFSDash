@@ -19,6 +19,9 @@ export default function BackOffice() {
     const [currentContainer, setCurrentContainer] = useState([]);
     const [currentContainerWithEverything, setCurrentContainerWithEverything] =  useState([]);
     const [selectedContainer, setSelectedContainer] = useState(0);
+    const [showPropModal, setShowPropModal] = useState(false);
+    const [newPropKey, setNewPropKey] = useState("");
+    const [newPropValue, setNewPropValue] = useState("");
     // const allBoxSets = [boxe];
     // const currentBoxes = allBoxSets[activeBoxSet];
     const box1 = [
@@ -171,7 +174,27 @@ export default function BackOffice() {
     const handleDeleteContainer = () => {
         setBoxSerializable(boxSerializable.filter((container, index) => index !== selectedContainer))
     };
-
+    const handleNewProp = () => {
+        const key = prompt("Enter the prop key:");
+        if (!key) return;
+        const value = "Votre valeur ici";
+        const newProps = {...(selectedBox.props || {}), [key]: value};
+        const updatedBox = {...selectedBox, props: newProps};
+        setSelectedBox(updatedBox);
+        const updatedContainer = currentContainer.map(box =>
+            box.id === activeBox ? updatedBox : box
+        );
+        handleUpdateContainer(updatedContainer);
+    };
+    const handleDeleteProps = (key) => {
+        const updatedProps = Object.entries(selectedBox.props).filter(([k]) => k !== key);
+        const updatedBox = {...selectedBox, props: Object.fromEntries(updatedProps)};
+        setSelectedBox(updatedBox);
+        const updatedContainer = currentContainer.map(box =>
+            box.id === activeBox ? updatedBox : box
+        );
+        handleUpdateContainer(updatedContainer);
+    };
 
     return (
         <div className="min-h-screen flex flex-col bg-base-200">
@@ -427,6 +450,12 @@ export default function BackOffice() {
                                             );
                                         }} className="textarea textarea-bordered textarea-primary w-full" placeholder="Contents"></textarea>
                                     </div>
+                                    <div className="divider">Props</div>
+                                    <div className="flex items-center gap-2">
+                                        <span>New props</span>
+                                        <button onClick={() => setShowPropModal(true)} className="btn btn-circle btn-primary btn-sm" title="Ajouter">+</button>
+                                    </div>
+                                    
                                     {selectedBox?.props &&
                                         <div className="flex flex-wrap gap-4">
                                             {Object.entries(selectedBox.props).map(([key, value]) => (
@@ -437,10 +466,71 @@ export default function BackOffice() {
                                                             { ...selectedBox, props: { ...selectedBox.props, [key]: e.target.value } }
                                                         );
                                                     }} className="input input-bordered input-primary w-auto max-w-[120px]" placeholder="Props"></input>
+                                                    <button className="btn btn-circle btn-error btn-sm" title="Supprimer" onClick={() => handleDeleteProps(key)}>
+                                                        <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                                            <path d="M3 6h18M8 6v12a2 2 0 002 2h4a2 2 0 002-2V6M10 11v6M14 11v6" />
+                                                            <rect x="9" y="3" width="6" height="3" rx="1" />
+                                                        </svg>
+                                                    </button>
                                                 </div>
                                             ))}
                                         </div>
                                     }
+                                    {showPropModal && ( // Modal for adding new props here
+                                    <dialog id="addPropModal" className="modal modal-open">
+                                        <div className="modal-box">
+                                        <h3 className="font-bold text-lg">Ajouter un nouveau prop</h3>
+                                        <div className="flex form-control mt-4 gap-2">
+                                            <label className="label">Nom du prop</label>
+                                            <input
+                                            className="input input-bordered"
+                                            value={newPropKey}
+                                            onChange={e => setNewPropKey(e.target.value)}
+                                            placeholder="Clé"
+                                            />
+                                        </div>
+                                        <div className="flex form-control mt-2 gap-2">
+                                            <label className="label">Valeur du prop</label>
+                                            <input
+                                            className="input input-bordered"
+                                            value={newPropValue}
+                                            onChange={e => setNewPropValue(e.target.value)}
+                                            placeholder="Valeur"
+                                            />
+                                        </div>
+                                        <div className="modal-action">
+                                            <button
+                                            className="btn btn-primary"
+                                            onClick={() => {
+                                                if (!newPropKey) return;
+                                                const newProps = { ...(selectedBox.props || {}), [newPropKey]: newPropValue };
+                                                const updatedBox = { ...selectedBox, props: newProps };
+                                                setSelectedBox(updatedBox);
+                                                const updatedContainer = currentContainer.map(box =>
+                                                box.id === activeBox ? updatedBox : box
+                                                );
+                                                handleUpdateContainer(updatedContainer);
+                                                setShowPropModal(false);
+                                                setNewPropKey("");
+                                                setNewPropValue("");
+                                            }}
+                                            >
+                                            Ajouter
+                                            </button>
+                                            <button
+                                            className="btn"
+                                            onClick={() => {
+                                                setShowPropModal(false);
+                                                setNewPropKey("");
+                                                setNewPropValue("");
+                                            }}
+                                            >
+                                            Annuler
+                                            </button>
+                                        </div>
+                                        </div>
+                                    </dialog>
+                                    )}
                                 </div>
                             </>
                         )}
