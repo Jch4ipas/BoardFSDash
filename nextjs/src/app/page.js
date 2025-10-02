@@ -8,13 +8,15 @@ import Clock from "@/components/Clock";
 import LatestWordPressVersion from "@/services/wordpresslastversion";
 import NextFreeze from "@/components/freeze";
 import Salleinfo from "@/services/Salleinfo";
+import { all } from "axios";
 
 export default function Home() {
 
   const [ boxSerializable, setBoxSerializable ] = useState([]);
-  const [ waitLoad, setWaitLoad ] = useState(false);
-  const [ allBoxSets, setAllBoxSets ] = useState([0, 2]);
+  const [ isLoaded, setIsLoaded ] = useState(false);
+  const [ allBoxSets, setAllBoxSets ] = useState([]);
   const [ activeBoxSet, setActiveBoxSet ] = useState(0);
+  const [ durationDisplayCurrentContainer, setDurationDisplayCurrentContainer ] = useState(30);
   const [ refreshItem, setRefreshItem ] = useState(0);
   const [ selectedContainer, setSelectedContainer ] = useState([]);
 
@@ -24,15 +26,25 @@ export default function Home() {
   const handleLoad = async () => {
       const res = await loadData();
       setBoxSerializable(res);
-      setWaitLoad(true);
+      setIsLoaded(true);
   }
+  useEffect(() => {
+    if (isLoaded) {
+      const displayableContainers = boxSerializable.filter(container => container.isGoingToDisplay == true);
+      const boxdisplay = displayableContainers.map((container, index) => index);
+      setAllBoxSets(boxdisplay);
+      const theBoxe = displayableContainers[boxdisplay[activeBoxSet]];
+      setSelectedContainer(theBoxe ? buildBoxes(theBoxe.boxes) : []);
+      setDurationDisplayCurrentContainer(theBoxe?.durationDisplay || 30);
+    }
+  }, [isLoaded, boxSerializable, activeBoxSet])
   useEffect(() => {
     const intervalId = setInterval(() => {
       setActiveBoxSet((prev) => (prev + 1) % allBoxSets.length);
-    }, 30000);
+    }, durationDisplayCurrentContainer * 1000);
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [durationDisplayCurrentContainer]);
 
   useEffect(() => {
     const refreshInterval = setInterval(() => {
@@ -72,14 +84,14 @@ export default function Home() {
     const box3 = [
     { id: 1, width: 6, height: 4, content: <iframe src="https://sdesk-monitoring.epfl.ch/" className="w-full h-full"></iframe>  }
   ];
-  useEffect(() => {
-    if (waitLoad) {
-      const theBoxe = boxSerializable[allBoxSets[activeBoxSet]];
-      // setSelectedContainer(theBoxe);
-      console.table(theBoxe)
-      setSelectedContainer(buildBoxes(theBoxe.boxes));
-    }
-  }, [waitLoad, activeBoxSet]);
+  // useEffect(() => {
+  //   if (isLoaded) {
+  //     const theBoxe = boxSerializable[allBoxSets[activeBoxSet]];
+  //     // setSelectedContainer(theBoxe);
+  //     console.table(theBoxe)
+  //     setSelectedContainer(buildBoxes(theBoxe.boxes));
+  //   }
+  // }, [isLoaded, activeBoxSet]);
 
 
   return (
