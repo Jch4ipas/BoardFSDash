@@ -2,33 +2,141 @@
   {
     "id": "1",
     "name": "Dashboard principal",
+    "isGoingToDisplay": true,
+    "durationDisplay": "30",
     "boxes": [
-      { "id": 1, "width": 2, "height": 4, "type": "iframe", "props": { "src": "https://actu.epfl.ch/?dashboardfr", "className": "w-full h-full" } },
-      { "id": 2, "width": 2, "height": 1, "type": "Salleinfo", "props": { "room": "INN011" } },
-      { "id": 3, "width": 1, "height": 1, "type": "LatestWordPressVersion" },
-      { "id": 4, "width": 1, "height": 1, "type": "Clock" },
-      { "id": 5, "width": 2, "height": 1, "type": "Salleinfo", "props": { "room": "INN033" } },
-      { "id": 6, "width": 2, "height": 2, "type": "NasaMedia" },
-      { "id": 7, "width": 2, "height": 1, "type": "Salleinfo", "props": { "room": "INN041" } },
-      { "id": 8, "width": 1, "height": 1, "type": "" },
-      { "id": 9, "width": 1, "height": 1, "type": "" },
-      { "id": 10, "width": 2, "height": 1, "type": "NextFreeze" }
+      {
+        "id": 1,
+        "width": 2,
+        "height": 4,
+        "type": "iframe",
+        "props": {
+          "src": "https://actu.epfl.ch/?dashboardfr",
+          "className": "w-full h-full"
+        }
+      },
+      {
+        "id": 2,
+        "width": 2,
+        "height": 1,
+        "type": "Salleinfo",
+        "props": {
+          "room": "INN011"
+        }
+      },
+      {
+        "id": 3,
+        "width": 1,
+        "height": 1,
+        "type": "LatestWordPressVersion"
+      },
+      {
+        "id": 4,
+        "width": 1,
+        "height": 1,
+        "type": "Clock"
+      },
+      {
+        "id": 5,
+        "width": 2,
+        "height": 1,
+        "type": "Salleinfo",
+        "props": {
+          "room": "INN033"
+        }
+      },
+      {
+        "id": 6,
+        "width": 2,
+        "height": 2,
+        "type": "NasaMedia"
+      },
+      {
+        "id": 7,
+        "width": 2,
+        "height": 1,
+        "type": "Salleinfo",
+        "props": {
+          "room": "INN041"
+        }
+      },
+      {
+        "id": 8,
+        "width": 1,
+        "height": 1,
+        "type": ""
+      },
+      {
+        "id": 9,
+        "width": 1,
+        "height": 1,
+        "type": ""
+      },
+      {
+        "id": 10,
+        "width": 2,
+        "height": 1,
+        "type": "NextFreeze"
+      }
     ]
   },
   {
     "id": "2",
-    "name": "Dashboard vidéo",
+    "name": "Dashboard ",
+    "isGoingToDisplay": false,
+    "durationDisplay": "4",
     "boxes": [
-      { "id": 1, "width": 5, "height": 1, "type": "video", "props": { "autoplay": true, "muted": true, "loop": true, "id": "myVideo" } },
-      { "id": 2, "width": 1, "height": 1, "type": "Clock" },
-      { "id": 3, "width": 6, "height": 3, "type": "h1", "props": { "children": "WPN" } }
+      {
+        "id": 1,
+        "width": 5,
+        "height": 1,
+        "type": "video",
+        "props": {
+          "autoplay": true,
+          "muted": true,
+          "loop": true,
+          "id": "myVideo"
+        }
+      },
+      {
+        "id": 2,
+        "width": 1,
+        "height": 1,
+        "type": "Clock"
+      },
+      {
+        "id": 3,
+        "width": "3",
+        "height": 3,
+        "type": "h1",
+        "props": {
+          "children": "WPN"
+        }
+      },
+      {
+        "id": 4,
+        "width": "3",
+        "height": "3",
+        "type": "NasaMedia"
+      }
     ]
   },
   {
     "id": "3",
     "name": "Monitoring Sdesk",
+    "isGoingToDisplay": true,
+    "durationDisplay": "20",
     "boxes": [
-      { "id": 1, "width": 6, "height": 4, "type": "iframe", "props": { "src": "https://sdesk-monitoring.epfl.ch/", "className": "w-full h-full" } }
+      {
+        "id": 1,
+        "width": 6,
+        "height": 4,
+        "type": "iframe",
+        "props": {
+          "src": "https://sdesk-monitoring.epfl.ch/",
+          "className": "w-full h-full"
+        }
+      }
     ]
   }
 ]

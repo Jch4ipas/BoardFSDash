@@ -132,6 +132,14 @@ export default function BackOffice() {
         // );
         setBoxe(buildBoxes(updatedContainer));
     };
+    useEffect(() => {
+        console.log("Current Container id changed", currentContainerWithEverything.name);
+        setBoxSerializable(prev =>
+            prev.map((container, index) =>
+                index === selectedContainer ? currentContainerWithEverything : container
+            )
+        );
+    }, [currentContainerWithEverything.name, currentContainerWithEverything.isGoingToDisplay, currentContainerWithEverything.durationDisplay]);
     const handleUpdateBox = () => {
         const updatedContainer = currentContainer.map(box => box.id === activeBox ? selectedBox : box);
         handleUpdateContainer(updatedContainer);
@@ -157,7 +165,7 @@ export default function BackOffice() {
         const lastId = boxSerializable.length > 0
             ? Math.max(...boxSerializable.map(container => container.id))
             : 0;
-        setBoxSerializable([...boxSerializable, { id: lastId + 1, name: "New Container", boxes: [] }]);
+        setBoxSerializable([...boxSerializable, { id: lastId + 1, name: "New Container", isGoingToDisplay: false, durationDisplay: 30, boxes: [] }]); // Creating new Container with default values
         setSelectedContainer(boxSerializable.length);
     };
     const handleDeleteContainer = () => {
@@ -281,8 +289,35 @@ export default function BackOffice() {
             <main className="h-[calc(100vh-10vh)] flex gap-4 p-4">
                 <div className="w-[30%] flex flex-col gap-4">
                     <div className="flex-1 rounded-lg p-4 bg-base-100">
-                        <h2 className="text-lg font-semibold"> {currentContainerWithEverything.name} </h2>
-                        <h2 className="text-sm text-gray-500"> ID: {currentContainerWithEverything.id} </h2>
+                        <input 
+                        className="text-2xl font-bold bg-transparent border-none focus:outline-none" 
+                        type="text" 
+                        value={currentContainerWithEverything?.name || ""} 
+                        onChange={(e) => setCurrentContainerWithEverything({...currentContainerWithEverything, name: e.target.value})} />
+                        <h2 className="text-sm text-gray-500"> 
+                            ID: {currentContainerWithEverything.id} 
+                        </h2>
+                        <div className="form-control w-full">
+                            <label className="label">
+                                <span className="label-text font-medium">Is Going to Display</span>
+                            </label>
+                            <input 
+                            className="" 
+                            type="checkbox" 
+                            checked={currentContainerWithEverything?.isGoingToDisplay || false} 
+                            onChange={(e) => setCurrentContainerWithEverything({...currentContainerWithEverything, isGoingToDisplay: e.target.checked})} />
+                        </div>
+                        <div className="form-control w-full">
+                            <label className="label">
+                                <span className="label-text font-medium">Duration of the display</span>
+                            </label>
+                            <input 
+                            className="input input-bordered input-primary w-full" 
+                            type="number" 
+                            value={currentContainerWithEverything?.durationDisplay || ""} 
+                            onChange={(e) => setCurrentContainerWithEverything({...currentContainerWithEverything, durationDisplay: e.target.value})} />
+                        </div>
+
                     </div>
                     <div className="flex-1 rounded-lg p-4 bg-base-100 overflow-y-auto">
                         {currentContainer.length === 0 ? (
