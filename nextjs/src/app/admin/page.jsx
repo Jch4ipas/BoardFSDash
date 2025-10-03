@@ -175,14 +175,12 @@ export default function BackOffice() {
         setBoxSerializable(boxSerializable.filter((container, index) => index !== selectedContainer))
     };
     const handleNewProp = () => {
-        const key = prompt("Enter the prop key:");
-        if (!key) return;
-        const value = "Votre valeur ici";
-        const newProps = {...(selectedBox.props || {}), [key]: value};
-        const updatedBox = {...selectedBox, props: newProps};
+        if (!newPropKey) return;
+        const newProps = { ...(selectedBox.props || {}), [newPropKey]: newPropValue };
+        const updatedBox = { ...selectedBox, props: newProps };
         setSelectedBox(updatedBox);
         const updatedContainer = currentContainer.map(box =>
-            box.id === activeBox ? updatedBox : box
+        box.id === activeBox ? updatedBox : box
         );
         handleUpdateContainer(updatedContainer);
     };
@@ -320,7 +318,7 @@ export default function BackOffice() {
                         <h2 className="text-sm text-gray-500"> 
                             ID: {currentContainerWithEverything.id} 
                         </h2>
-                        <div className="form-control w-full">
+                        <div className="flex form-control w-full gap-2">
                             <label className="label">
                                 <span className="label-text font-medium">Is Going to Display</span>
                             </label>
@@ -502,14 +500,7 @@ export default function BackOffice() {
                                             <button
                                             className="btn btn-primary"
                                             onClick={() => {
-                                                if (!newPropKey) return;
-                                                const newProps = { ...(selectedBox.props || {}), [newPropKey]: newPropValue };
-                                                const updatedBox = { ...selectedBox, props: newProps };
-                                                setSelectedBox(updatedBox);
-                                                const updatedContainer = currentContainer.map(box =>
-                                                box.id === activeBox ? updatedBox : box
-                                                );
-                                                handleUpdateContainer(updatedContainer);
+                                                handleNewProp();
                                                 setShowPropModal(false);
                                                 setNewPropKey("");
                                                 setNewPropValue("");
