@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import { NextResponse } from "next/server";
 import { notifyClients } from "../events/route";
-
+import { auth } from "@/services/auth";
 
 export async function GET() {
   const filePath = path.join(process.cwd(), "data", "data.json");
@@ -23,6 +23,10 @@ export async function GET() {
 }
 
 export async function POST(request) {
+    const session = await auth();
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const body = await request.json();
     const dirPath = path.join(process.cwd(), "data");
     const filePath = path.join(dirPath, "data.json");
