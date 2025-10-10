@@ -4,6 +4,7 @@ import { saveData } from "@/services/saveJSON";
 import { loadData } from "@/services/loadJSON";
 import { buildBoxes } from "@/components/buildBoxe"
 import { useState, useEffect } from "react";
+import { registry } from "@/components/registry";
 import NasaMedia from "@/services/infonasa";
 import Clock from "@/components/Clock";
 import LatestWordPressVersion from "@/services/wordpresslastversion";
@@ -442,12 +443,22 @@ export default function BackOffice() {
                                         <label className="label">
                                             <span className="label-text font-medium">Content</span>
                                         </label>
-                                        <textarea value={selectedBox?.type || ""} onChange={(e) => {
-                                            setSelectedBox(
-                                                { ...selectedBox, type: e.target.value }
-                                            );
-                                        }} className="textarea textarea-bordered textarea-primary w-full" placeholder="Contents"></textarea>
+                                        <select
+                                            className="select select-bordered select-primary w-full"
+                                            value={selectedBox?.type || ""}
+                                            onChange={e => {
+                                                setSelectedBox({ ...selectedBox, type: e.target.value });
+                                            }}
+                                        >
+                                            <option value="">-- Choisir --</option>
+                                            {Object.keys(registry).map((key) => (
+                                                <option key={key} value={key}>
+                                                    {key === "" ? "Balise vide" : key}
+                                                </option>
+                                            ))}
+                                        </select>
                                     </div>
+
                                     <div className="divider">Props</div>
                                     <div className="flex items-center gap-2">
                                         <span>New props</span>
