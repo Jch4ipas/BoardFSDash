@@ -10,6 +10,7 @@ import Clock from "@/components/Clock";
 import LatestWordPressVersion from "@/services/wordpresslastversion";
 import NextFreeze from "@/components/freeze";
 import Salleinfo from "@/services/Salleinfo";
+import Modal from "@/components/modal";
 
 export default function BackOffice() {
     const [boxe, setBoxe] = useState([]);
@@ -20,8 +21,9 @@ export default function BackOffice() {
     const [currentContainer, setCurrentContainer] = useState([]);
     const [currentContainerWithEverything, setCurrentContainerWithEverything] =  useState([]);
     const [selectedContainer, setSelectedContainer] = useState(0);
-    const [showPropModal, setShowPropModal] = useState(false);
     const [newPropKey, setNewPropKey] = useState("");
+    const [showPropModal, setShowPropModal] = useState(false);
+    const [showNotEnoughSpaceForNewBoxModal, setShowNotEnoughSpaceForNewBoxModal] = useState(false);
     const [newPropValue, setNewPropValue] = useState("");
     const [gridColumn, setGridColumn] = useState(6);
     const [gridRow, setGridRow] = useState(4);
@@ -122,12 +124,16 @@ export default function BackOffice() {
             ? Math.max(...currentContainer.map(box => box.id))
             : 0;
         const position = findNextAvailablePosition(currentContainer, 1, 1, gridColumn, gridRow);
-        const newBox = { id: lastId + 1, width: 1, height: 1, x: position.x, y: position.y, type: "" };
-        const updatedContainer = [...currentContainer, newBox];
-        handleUpdateContainer(updatedContainer);
-        // setCurrentContainer(updatedContainer);
-        setBoxe(buildBoxes(updatedContainer));
-        console.log("New Box");
+        if (!position) {
+            setShowNotEnoughSpaceForNewBoxModal(true);
+        } else {
+            const newBox = { id: lastId + 1, width: 1, height: 1, x: position.x, y: position.y, type: "" };
+            const updatedContainer = [...currentContainer, newBox];
+            handleUpdateContainer(updatedContainer);
+            // setCurrentContainer(updatedContainer);
+            setBoxe(buildBoxes(updatedContainer));
+            console.log("New Box");
+        }
     };
     const handleDeleteBox = () => {
         const updatedContainer = currentContainer.filter((box) => box.id !== activeBox);
@@ -513,7 +519,7 @@ export default function BackOffice() {
                                         <span>New props</span>
                                         <button onClick={() => setShowPropModal(true)} className="btn btn-circle btn-primary btn-sm" title="Ajouter">+</button>
                                     </div>
-                                    
+
                                     {selectedBox?.props &&
                                         <div className="flex flex-wrap gap-4">
                                             {Object.entries(selectedBox.props).map(([key, value]) => (
@@ -534,54 +540,58 @@ export default function BackOffice() {
                                             ))}
                                         </div>
                                     }
-                                    {showPropModal && ( // Modal for adding new props here
-                                    <dialog id="addPropModal" className="modal modal-open">
-                                        <div className="modal-box">
-                                        <h3 className="font-bold text-lg">Ajouter un nouveau prop</h3>
-                                        <div className="flex form-control mt-4 gap-2">
+                                    <Modal
+                                        open={showPropModal}
+                                        title="Ajouter un nouveau prop"
+                                        onClose={() => {
+                                            setShowPropModal(false);
+                                            setNewPropKey("");
+                                            setNewPropValue("");
+                                        }}
+                                    >
+                                        <div className="form-control gap-2">
                                             <label className="label">Nom du prop</label>
                                             <input
-                                            className="input input-bordered"
-                                            value={newPropKey}
-                                            onChange={e => setNewPropKey(e.target.value)}
-                                            placeholder="Clé"
+                                                className="input input-bordered"
+                                                value={newPropKey}
+                                                onChange={(e) => setNewPropKey(e.target.value)}
+                                                placeholder="Clé"
                                             />
-                                        </div>
-                                        <div className="flex form-control mt-2 gap-2">
-                                            <label className="label">Valeur du prop</label>
+
+                                            <label className="label mt-2">Valeur du prop</label>
                                             <input
-                                            className="input input-bordered"
-                                            value={newPropValue}
-                                            onChange={e => setNewPropValue(e.target.value)}
-                                            placeholder="Valeur"
+                                                className="input input-bordered"
+                                                value={newPropValue}
+                                                onChange={(e) => setNewPropValue(e.target.value)}
+                                                placeholder="Valeur"
                                             />
+
+                                            <div className="modal-action">
+                                                <button
+                                                    className="btn btn-primary"
+                                                    onClick={() => {
+                                                        handleNewProp();
+                                                        setShowPropModal(false);
+                                                        setNewPropKey("");
+                                                        setNewPropValue("");
+                                                    }}
+                                                >
+                                                    Ajouter
+                                                </button>
+                                            </div>
                                         </div>
-                                        <div className="modal-action">
-                                            <button
-                                            className="btn btn-primary"
-                                            onClick={() => {
-                                                handleNewProp();
-                                                setShowPropModal(false);
-                                                setNewPropKey("");
-                                                setNewPropValue("");
-                                            }}
-                                            >
-                                            Ajouter
-                                            </button>
-                                            <button
-                                            className="btn"
-                                            onClick={() => {
-                                                setShowPropModal(false);
-                                                setNewPropKey("");
-                                                setNewPropValue("");
-                                            }}
-                                            >
-                                            Annuler
-                                            </button>
+                                    </Modal>
+                                    <Modal
+                                        open={showNotEnoughSpaceForNewBoxModal}
+                                        title="Pas assez de place"
+                                        onClose={() => {
+                                            setShowNotEnoughSpaceForNewBoxModal(false);
+                                        }}
+                                    >
+                                        <div className="form-control gap-2">
+                                            
                                         </div>
-                                        </div>
-                                    </dialog>
-                                    )}
+                                    </Modal>
                                 </div>
                             </>
                         )}
