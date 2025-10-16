@@ -23,6 +23,8 @@ export default function BackOffice() {
     const [showPropModal, setShowPropModal] = useState(false);
     const [newPropKey, setNewPropKey] = useState("");
     const [newPropValue, setNewPropValue] = useState("");
+    const [gridColumn, setGridColumn] = useState(6);
+    const [gridRow, setGridRow] = useState(4);
     // const allBoxSets = [boxe];
     // const currentBoxes = allBoxSets[activeBoxSet];
     const box1 = [
@@ -119,7 +121,8 @@ export default function BackOffice() {
         const lastId = currentContainer.length > 0
             ? Math.max(...currentContainer.map(box => box.id))
             : 0;
-        const newBox = { id: lastId + 1, width: 1, height: 1, x: null, y: null, type: "" };
+        const position = findNextAvailablePosition(currentContainer, 1, 1, gridColumn, gridRow);
+        const newBox = { id: lastId + 1, width: 1, height: 1, x: position.x, y: position.y, type: "" };
         const updatedContainer = [...currentContainer, newBox];
         handleUpdateContainer(updatedContainer);
         // setCurrentContainer(updatedContainer);
@@ -193,6 +196,34 @@ export default function BackOffice() {
             box.id === activeBox ? updatedBox : box
         );
         handleUpdateContainer(updatedContainer);
+    };
+
+    const findNextAvailablePosition = (boxes, newWidth = 1, newHeight = 1, gridColumns, gridRows) => {
+        const grid = Array.from({ length: gridRows }, () => Array(gridColumns).fill(false));
+        for (const box of boxes) {
+            for (let dy = 0; dy < box.height; dy++) {
+                for (let dx = 0; dx < box.width; dx++) {
+                    grid[(box.y - 1) + dy][(box.x - 1) + dx] = true;
+                }
+            }
+        }
+        for (let y = 0; y < gridRows; y++) {
+            for (let x = 0; x < gridColumns; x++) {
+                let canPlace = true;
+                for (let dy = 0; dy < newHeight; dy++) {
+                    for (let dx = 0; dx < newWidth; dx++) {
+                        if (y + dy >= gridRows || x + dx >= gridColumns || grid[y + dy][x + dx]) {
+                            canPlace = false;
+                            break;
+                        }
+                    }
+                }
+                if (canPlace) {
+                    return {x: x + 1, y: y + 1};
+                }
+            }
+        }
+        return null;
     };
 
     return (
@@ -561,7 +592,7 @@ export default function BackOffice() {
                         <h2 className="text-lg font-semibold"></h2>
                     </div>
                     <div className="w-[100%] rounded-lg p-4 bg-base-100 h-[70%]">
-                        <div className="grid grid-cols-6 grid-rows-4 gap-2 w-full h-full p-2">
+                        <div className={`grid grid-cols-${gridColumn} grid-rows-${gridRow} gap-2 w-full h-full p-2`}>
                             {boxe.map((box, index) => (
                                 <div
                                     key={index}
