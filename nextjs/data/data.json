@@ -3,12 +3,14 @@
     "id": "1",
     "name": "Dashboard principal",
     "isGoingToDisplay": true,
-    "durationDisplay": "30",
+    "durationDisplay": "2",
     "boxes": [
       {
         "id": 1,
         "width": 2,
         "height": 4,
+        "x": 1,
+        "y": 1,
         "type": "iframe",
         "props": {
           "src": "https://actu.epfl.ch/?dashboardfr",
@@ -19,6 +21,8 @@
         "id": 2,
         "width": 2,
         "height": 1,
+        "x": 3,
+        "y": 1,
         "type": "Salleinfo",
         "props": {
           "room": "INN011"
@@ -28,18 +32,24 @@
         "id": 3,
         "width": 1,
         "height": 1,
+        "x": 5,
+        "y": 1,
         "type": "LatestWordPressVersion"
       },
       {
         "id": 4,
         "width": 1,
         "height": 1,
+        "x": 6,
+        "y": 1,
         "type": "Clock"
       },
       {
         "id": 5,
         "width": 2,
         "height": 1,
+        "x": 3,
+        "y": 2,
         "type": "Salleinfo",
         "props": {
           "room": "INN033"
@@ -49,12 +59,16 @@
         "id": 6,
         "width": 2,
         "height": 2,
+        "x": 5,
+        "y": 2,
         "type": "NasaMedia"
       },
       {
         "id": 7,
         "width": 2,
         "height": 1,
+        "x": 3,
+        "y": 3,
         "type": "Salleinfo",
         "props": {
           "room": "INN041"
@@ -64,18 +78,24 @@
         "id": 8,
         "width": 1,
         "height": 1,
+        "x": 5,
+        "y": 4,
         "type": ""
       },
       {
         "id": 9,
         "width": 1,
         "height": 1,
-        "type": ""
+        "x": 6,
+        "y": 4,
+        "type": "Clock"
       },
       {
         "id": 10,
         "width": 2,
         "height": 1,
+        "x": 3,
+        "y": 4,
         "type": "NextFreeze"
       }
     ]
@@ -124,7 +144,7 @@
   {
     "id": "3",
     "name": "Monitoring Sdesk",
-    "isGoingToDisplay": true,
+    "isGoingToDisplay": false,
     "durationDisplay": "20",
     "boxes": [
       {
@@ -136,6 +156,71 @@
           "src": "https://sdesk-monitoring.epfl.ch/",
           "className": "w-full h-full"
         }
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "New Container",
+    "isGoingToDisplay": false,
+    "durationDisplay": "5",
+    "boxes": [
+      {
+        "id": 1,
+        "width": "4",
+        "height": "2",
+        "type": "NasaMedia"
+      },
+      {
+        "id": 2,
+        "width": 1,
+        "height": 1,
+        "type": "iframe",
+        "props": {
+          "src": "https://actu.epfl.ch/"
+        }
+      },
+      {
+        "id": 3,
+        "width": 1,
+        "height": 1,
+        "type": ""
+      },
+      {
+        "id": 4,
+        "width": 1,
+        "height": 1,
+        "type": ""
+      },
+      {
+        "id": 5,
+        "width": 1,
+        "height": 1,
+        "type": ""
+      },
+      {
+        "id": 6,
+        "width": 1,
+        "height": 1,
+        "type": ""
+      },
+      {
+        "id": 7,
+        "width": 1,
+        "height": 1,
+        "type": ""
+      },
+      {
+        "id": 8,
+        "width": 1,
+        "height": 1,
+        "type": ""
+      },
+      {
+        "id": 9,
+        "width": 1,
+        "height": 1,
+        "type": ""
       }
     ]
   }

@@ -100,10 +100,10 @@ export default function Home() {
           {Array.isArray(selectedContainer) && selectedContainer.map((box) => (
             <div
               key={box.id}
-              className="border border-gray-600 rounded-3xl flex justify-center items-center text-white font-bold shadow-md p-2"
+              className={`border border-gray-600 rounded-3xl justify-center items-center text-white font-bold shadow-md p-2`}
               style={{
-                gridColumn: `span ${box.width}`,
-                gridRow: `span ${box.height}`,
+                gridColumn: `${box.x} / span ${box.width}`,
+                gridRow: `${box.y} / span ${box.height}`,
               }}
             >
               <div className="w-full h-full flex items-center justify-center overflow-hidden rounded-2xl">

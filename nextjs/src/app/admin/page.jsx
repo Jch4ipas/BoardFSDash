@@ -119,7 +119,7 @@ export default function BackOffice() {
         const lastId = currentContainer.length > 0
             ? Math.max(...currentContainer.map(box => box.id))
             : 0;
-        const newBox = { id: lastId + 1, width: 1, height: 1, type: "" };
+        const newBox = { id: lastId + 1, width: 1, height: 1, x: null, y: null, type: "" };
         const updatedContainer = [...currentContainer, newBox];
         handleUpdateContainer(updatedContainer);
         // setCurrentContainer(updatedContainer);
@@ -431,13 +431,31 @@ export default function BackOffice() {
                                         <label className="label">
                                             <span className="label-text font-medium">X</span>
                                         </label>
-                                        <input disabled type="number" placeholder="x" className="input input-bordered input-primary w-full" />
+                                        <input
+                                            value={selectedBox?.x || ''}
+                                            onChange={(e) => {
+                                                setSelectedBox(
+                                                    { ...selectedBox, x: e.target.value }
+                                                );
+                                            }}
+                                            type="number"
+                                            placeholder="X"
+                                            className="input input-bordered input-primary w-full" />
                                     </div>
                                     <div className="form-control w-full">
                                         <label className="label">
                                             <span className="label-text font-medium">Y</span>
                                         </label>
-                                        <input disabled type="number" placeholder="y" className="input input-bordered input-primary w-full" />
+                                        <input
+                                            value={selectedBox?.y || ''}
+                                            onChange={(e) => {
+                                                setSelectedBox(
+                                                    { ...selectedBox, y: e.target.value }
+                                                );
+                                            }}
+                                            type="number"
+                                            placeholder="Y"
+                                            className="input input-bordered input-primary w-full" />
                                     </div>
                                     <div className="form-control w-full">
                                         <label className="label">
@@ -547,10 +565,10 @@ export default function BackOffice() {
                             {boxe.map((box, index) => (
                                 <div
                                     key={index}
-                                    className="border border-gray-600 rounded-3xl flex justify-center items-center text-white font-bold shadow-md p-2 cursor-pointer transition-all duration-150 hover:scale-105 hover:border-blue-500 hover:bg-blue-900/30"
+                                    className={`border border-gray-600 rounded-3xl flex justify-center items-center text-white font-bold shadow-md p-2 cursor-pointer transition-all duration-150 hover:scale-105 hover:border-blue-500 hover:bg-blue-900/30`}
                                     style={{
-                                        gridColumn: `span ${box.width}`,
-                                        gridRow: `span ${box.height}`,
+                                        gridColumn: `${box.x} / span ${box.width}`,
+                                        gridRow: `${box.y} / span ${box.height}`,
                                     }}
                                     onClick={() => setActiveBox(box.id)}
                                 >
