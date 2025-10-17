@@ -1,4 +1,4 @@
-# BoardFSDash License
+# BoardFSDash Internal Non-Commercial License v1.0
 
 **Copyright © 2025 Jchaipas**  
 All rights reserved.
