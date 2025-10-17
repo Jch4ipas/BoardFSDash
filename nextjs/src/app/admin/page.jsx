@@ -209,6 +209,10 @@ export default function BackOffice() {
     const findNextAvailablePosition = (boxes, newWidth = 1, newHeight = 1, gridColumns, gridRows) => {
         const grid = Array.from({ length: gridRows }, () => Array(gridColumns).fill(false));
         for (const box of boxes) {
+            if (box.x == null || box.y == null) {
+                console.log("Alert: you have a box without position x or y, please check the box properties")
+                continue;
+            }
             for (let dy = 0; dy < box.height; dy++) {
                 for (let dx = 0; dx < box.width; dx++) {
                     grid[(box.y - 1) + dy][(box.x - 1) + dx] = true;
