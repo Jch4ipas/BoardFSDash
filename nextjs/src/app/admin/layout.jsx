@@ -19,8 +19,8 @@ export default async function AdminLayout({ children }) {
                 tabIndex={0}
                 className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
                 <li><a href="/">Dashboard view</a></li>
-                <li><a>BackOffice</a></li>
-                <li><a>About</a></li>
+                <li><a href="/admin">BackOffice</a></li>
+                <li><a>About (not working)</a></li>
               </ul>
             </div>
           </div>
