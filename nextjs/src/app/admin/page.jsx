@@ -19,7 +19,7 @@ export default function BackOffice() {
     const [selectedBox, setSelectedBox] = useState([]);
     const [allContainersSets, setAllContainersSets] = useState([]);
     const [currentContainer, setCurrentContainer] = useState([]);
-    const [currentContainerWithEverything, setCurrentContainerWithEverything] =  useState([]);
+    const [currentContainerWithEverything, setCurrentContainerWithEverything] = useState([]);
     const [selectedContainer, setSelectedContainer] = useState(0);
     const [newPropKey, setNewPropKey] = useState("");
     const [showPropModal, setShowPropModal] = useState(false);
@@ -27,6 +27,7 @@ export default function BackOffice() {
     const [newPropValue, setNewPropValue] = useState("");
     const [gridColumn, setGridColumn] = useState(6);
     const [gridRow, setGridRow] = useState(4);
+    const [draggedBoxId, setDraggedBoxId] = useState(null);
     // const allBoxSets = [boxe];
     // const currentBoxes = allBoxSets[activeBoxSet];
     const box1 = [
@@ -230,6 +231,22 @@ export default function BackOffice() {
             }
         }
         return null;
+    };
+    const handleDrop = (targetBoxId) => {
+        if (draggedBoxId === null || draggedBoxId === targetBoxId) return;
+        const draggedBox = currentContainer.find(box => box.id === draggedBoxId);
+        const targetBox = currentContainer.find(box => box.id === targetBoxId);
+        if (!draggedBox || !targetBox) return;
+
+        // Échange les positions x/y
+        const updatedContainer = currentContainer.map(box => {
+            if (box.id === draggedBoxId) return { ...box, x: targetBox.x, y: targetBox.y };
+            if (box.id === targetBoxId) return { ...box, x: draggedBox.x, y: draggedBox.y };
+            return box;
+        });
+
+        handleUpdateContainer(updatedContainer);
+        setDraggedBoxId(null);
     };
 
     return (
@@ -606,6 +623,10 @@ export default function BackOffice() {
                             {boxe.map((box, index) => (
                                 <div
                                     key={index}
+                                    draggable
+                                    onDragStart={() => setDraggedBoxId(box.id)}
+                                    onDragOver={e => e.preventDefault()}
+                                    onDrop={() => handleDrop(box.id)}
                                     className={`border border-gray-600 rounded-3xl flex justify-center items-center text-white font-bold shadow-md p-2 cursor-pointer transition-all duration-150 hover:scale-105 hover:border-blue-500 hover:bg-blue-900/30`}
                                     style={{
                                         gridColumn: `${box.x} / span ${box.width}`,
