@@ -28,6 +28,7 @@ export default function BackOffice() {
     const [gridColumn, setGridColumn] = useState(6);
     const [gridRow, setGridRow] = useState(4);
     const [draggedBoxId, setDraggedBoxId] = useState(null);
+    const [hoveredBoxId, setHoveredBoxId] = useState(null);
     // const allBoxSets = [boxe];
     // const currentBoxes = allBoxSets[activeBoxSet];
     const box1 = [
@@ -247,6 +248,30 @@ export default function BackOffice() {
 
         handleUpdateContainer(updatedContainer);
         setDraggedBoxId(null);
+    };
+
+    const handleStretchedBox = (boxId, isX, isAdding) => {
+        if (boxId === null) return;
+        const updatedContainer = currentContainer.map(box => {
+            if (box.id === boxId) {
+                if (!isAdding) {
+                    if (box.width == 1 || box.height == 1) {
+
+                    }
+                }
+                if (isX) {
+                    return { ...box, width: isAdding? box.width + 1 : box.width == 1? box.width : box.width - 1}
+                } else {
+                    return { ...box, height: isAdding? box.height + 1 : box.height == 1? box.height : box.height - 1}
+                }
+            } else {
+                return box;
+            }
+        });
+        // const updatedContainer = currentContainer.map(box =>
+        //     box.id === boxId ? updatedBox : box
+        // );
+        handleUpdateContainer(updatedContainer);
     };
 
     return (
@@ -627,6 +652,8 @@ export default function BackOffice() {
                                     onDragStart={() => setDraggedBoxId(box.id)}
                                     onDragOver={e => e.preventDefault()}
                                     onDrop={() => handleDrop(box.id)}
+                                    onMouseEnter={() => setHoveredBoxId(box.id)}
+                                    onMouseLeave={() => setHoveredBoxId(null)}
                                     className={`border border-gray-600 rounded-3xl flex justify-center items-center text-white font-bold shadow-md p-2 cursor-pointer transition-all duration-150 hover:scale-105 hover:border-blue-500 hover:bg-blue-900/30`}
                                     style={{
                                         gridColumn: `${box.x} / span ${box.width}`,
@@ -637,6 +664,54 @@ export default function BackOffice() {
                                     <div className="w-full h-full flex items-center justify-center overflow-hidden rounded-2xl">
                                         {box.content}
                                     </div>
+                                    {hoveredBoxId === box.id && (
+                                        <>
+                                            {/* Conteneur pour les boutons à droite */}
+                                            <div className="absolute top-1/2 -translate-y-1/2 right-1 flex flex-col gap-1">
+                                                <button
+                                                    className="bg-blue-600 hover:bg-blue-700 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-md"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleStretchedBox(box.id, true, true);
+                                                    }}
+                                                >
+                                                    +
+                                                </button>
+                                                <button
+                                                    className="bg-blue-600 hover:bg-blue-700 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-md"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleStretchedBox(box.id, true, false);
+                                                    }}
+                                                >
+                                                    -
+                                                </button>
+                                            </div>
+
+                                            {/* Conteneur pour les boutons en bas */}
+                                            <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex flex-row gap-1">
+                                                <button
+                                                    className="bg-blue-600 hover:bg-blue-700 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-md"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleStretchedBox(box.id, false, true);
+                                                    }}
+                                                >
+                                                    +
+                                                </button>
+                                                <button
+                                                    className="bg-blue-600 hover:bg-blue-700 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-md"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleStretchedBox(box.id, false, false);
+                                                    }}
+                                                >
+                                                    -
+                                                </button>
+                                            </div>
+
+                                        </>
+                                    )}
                                 </div>
                             ))}
                         </div>
