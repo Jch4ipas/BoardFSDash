@@ -192,13 +192,13 @@ export default function BackOffice() {
         const updatedBox = { ...selectedBox, props: newProps };
         setSelectedBox(updatedBox);
         const updatedContainer = currentContainer.map(box =>
-        box.id === activeBox ? updatedBox : box
+            box.id === activeBox ? updatedBox : box
         );
         handleUpdateContainer(updatedContainer);
     };
     const handleDeleteProps = (key) => {
         const updatedProps = Object.entries(selectedBox.props).filter(([k]) => k !== key);
-        const updatedBox = {...selectedBox, props: Object.fromEntries(updatedProps)};
+        const updatedBox = { ...selectedBox, props: Object.fromEntries(updatedProps) };
         setSelectedBox(updatedBox);
         const updatedContainer = currentContainer.map(box =>
             box.id === activeBox ? updatedBox : box
@@ -231,7 +231,7 @@ export default function BackOffice() {
                     }
                 }
                 if (canPlace) {
-                    return {x: x + 1, y: y + 1};
+                    return { x: x + 1, y: y + 1 };
                 }
             }
         }
@@ -264,9 +264,9 @@ export default function BackOffice() {
                     }
                 }
                 if (isX) {
-                    return { ...box, width: isAdding? box.width + 1 : box.width == 1? box.width : box.width - 1}
+                    return { ...box, width: isAdding ? box.width + 1 : box.width == 1 ? box.width : box.width - 1 }
                 } else {
-                    return { ...box, height: isAdding? box.height + 1 : box.height == 1? box.height : box.height - 1}
+                    return { ...box, height: isAdding ? box.height + 1 : box.height == 1 ? box.height : box.height - 1 }
                 }
             } else {
                 return box;
@@ -394,33 +394,33 @@ export default function BackOffice() {
             <main className="h-[calc(100vh-10vh)] flex gap-4 p-4">
                 <div className="w-[30%] flex flex-col gap-4">
                     <div className="flex-1 rounded-lg p-4 bg-base-100">
-                        <input 
-                        className="text-2xl font-bold bg-transparent border-none focus:outline-none" 
-                        type="text" 
-                        value={currentContainerWithEverything?.name || ""} 
-                        onChange={(e) => setCurrentContainerWithEverything({...currentContainerWithEverything, name: e.target.value})} />
-                        <h2 className="text-sm text-gray-500"> 
-                            ID: {currentContainerWithEverything.id} 
+                        <input
+                            className="text-2xl font-bold bg-transparent border-none focus:outline-none"
+                            type="text"
+                            value={currentContainerWithEverything?.name || ""}
+                            onChange={(e) => setCurrentContainerWithEverything({ ...currentContainerWithEverything, name: e.target.value })} />
+                        <h2 className="text-sm text-gray-500">
+                            ID: {currentContainerWithEverything.id}
                         </h2>
                         <div className="flex form-control w-full gap-2">
                             <label className="label">
                                 <span className="label-text font-medium">Is Going to Display</span>
                             </label>
-                            <input 
-                            className="" 
-                            type="checkbox" 
-                            checked={currentContainerWithEverything?.isGoingToDisplay || false} 
-                            onChange={(e) => setCurrentContainerWithEverything({...currentContainerWithEverything, isGoingToDisplay: e.target.checked})} />
+                            <input
+                                className=""
+                                type="checkbox"
+                                checked={currentContainerWithEverything?.isGoingToDisplay || false}
+                                onChange={(e) => setCurrentContainerWithEverything({ ...currentContainerWithEverything, isGoingToDisplay: e.target.checked })} />
                         </div>
                         <div className="form-control w-full">
                             <label className="label">
                                 <span className="label-text font-medium">Duration of the display</span>
                             </label>
-                            <input 
-                            className="input input-bordered input-primary w-full" 
-                            type="number" 
-                            value={currentContainerWithEverything?.durationDisplay || ""} 
-                            onChange={(e) => setCurrentContainerWithEverything({...currentContainerWithEverything, durationDisplay: e.target.value})} />
+                            <input
+                                className="input input-bordered input-primary w-full"
+                                type="number"
+                                value={currentContainerWithEverything?.durationDisplay || ""}
+                                onChange={(e) => setCurrentContainerWithEverything({ ...currentContainerWithEverything, durationDisplay: e.target.value })} />
                         </div>
 
                     </div>
@@ -635,7 +635,7 @@ export default function BackOffice() {
                                         }}
                                     >
                                         <div className="form-control gap-2">
-                                            
+
                                         </div>
                                     </Modal>
                                 </div>
