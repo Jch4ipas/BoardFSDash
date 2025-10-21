@@ -35,117 +35,117 @@
 #   become: true
 # Not working code
 
-- name: Start Docker service
-  systemd:
-    name: docker
-    state: started
-    enabled: yes
+# - name: Start Docker service
+#   systemd:
+#     name: docker
+#     state: started
+#     enabled: yes
 
-- name: Add user to docker group
-  command: sudo usermod -aG docker $USER
-  become: true
+# - name: Add user to docker group
+#   command: sudo usermod -aG docker $USER
+#   become: true
 
 # - name: Apply Change
 #   command: newgrp docker
 #   become: true
 
-- name: Create configuration folder for prometheus
-  file:
-    path: /opt/prometheus
-    state: directory
-  become: true
+# - name: Create configuration folder for prometheus
+#   file:
+#     path: /opt/prometheus
+#     state: directory
+#   become: true
 
-- name: Create env file
-  copy:
-    dest: /opt/.env
-    content: |
-      NASA_API_KEY={{ NASA_API_KEY }}
-      AUTH_EWS_CREDENTIALS_USERNAME={{ AUTH_EWS_CREDENTIALS_USERNAME }}
-      AUTH_EWS_CREDENTIALS_PASSWORD={{ AUTH_EWS_CREDENTIALS_PASSWORD }}
-      AUTH_EWS_SERVICE_ENDPOINT={{ AUTH_EWS_SERVICE_ENDPOINT }}
-  become: true
+# - name: Create env file
+#   copy:
+#     dest: /opt/.env
+#     content: |
+#       NASA_API_KEY={{ NASA_API_KEY }}
+#       AUTH_EWS_CREDENTIALS_USERNAME={{ AUTH_EWS_CREDENTIALS_USERNAME }}
+#       AUTH_EWS_CREDENTIALS_PASSWORD={{ AUTH_EWS_CREDENTIALS_PASSWORD }}
+#       AUTH_EWS_SERVICE_ENDPOINT={{ AUTH_EWS_SERVICE_ENDPOINT }}
+#   become: true
 
-- name: Create freezeDates.json file
-  copy:
-    dest: /opt/freezeDates.json
-    content: |
-      [
-        { "start": "2025-06-09", "end": "2025-06-09", "description": "Lundi de Pentecôte" },
-        { "start": "2025-06-13", "end": "2025-07-15", "description": "Gel d’examens d’été" },
-        { "start": "2025-08-01", "end": "2025-08-01", "description": "Fête nationale" },
-        { "start": "2025-09-05", "end": "2025-09-14", "description": "Gel de rentrée" },
-        { "start": "2025-09-22", "end": "2025-09-22", "description": "Lundi du Jeûne fédéral" },
-        { "start": "2025-12-18", "end": "2026-01-04", "description": "Gel de Noël / Nouvel An" },
-        { "start": "2026-01-09", "end": "2026-01-31", "description": "Gel d’examens d’hiver" }
-      ]
-  become: true
+# - name: Create freezeDates.json file
+#   copy:
+#     dest: /opt/freezeDates.json
+#     content: |
+#       [
+#         { "start": "2025-06-09", "end": "2025-06-09", "description": "Lundi de Pentecôte" },
+#         { "start": "2025-06-13", "end": "2025-07-15", "description": "Gel d’examens d’été" },
+#         { "start": "2025-08-01", "end": "2025-08-01", "description": "Fête nationale" },
+#         { "start": "2025-09-05", "end": "2025-09-14", "description": "Gel de rentrée" },
+#         { "start": "2025-09-22", "end": "2025-09-22", "description": "Lundi du Jeûne fédéral" },
+#         { "start": "2025-12-18", "end": "2026-01-04", "description": "Gel de Noël / Nouvel An" },
+#         { "start": "2026-01-09", "end": "2026-01-31", "description": "Gel d’examens d’hiver" }
+#       ]
+#   become: true
 
-- name: Create the configuration file for prometheus
-  copy:
-    dest: /opt/prometheus/prometheus.yml
-    content: |
-      global:
-        scrape_interval: 15s
+# - name: Create the configuration file for prometheus
+#   copy:
+#     dest: /opt/prometheus/prometheus.yml
+#     content: |
+#       global:
+#         scrape_interval: 15s
 
-      scrape_configs:
-        - job_name: 'prometheus'
-          static_configs:
-            - targets: ['localhost:9090']
+#       scrape_configs:
+#         - job_name: 'prometheus'
+#           static_configs:
+#             - targets: ['localhost:9090']
 
-        - job_name: 'node_exporter'
-          static_configs:
-            - targets: ['node_exporter:9100']
-  become: true
+#         - job_name: 'node_exporter'
+#           static_configs:
+#             - targets: ['node_exporter:9100']
+#   become: true
 
-- name: Create the docker compose file
-  copy:
-    dest: /opt/docker-compose.yml
-    content: |
-      version: '3.7'
-      services:
-        prometheus:
-          image: "prom/prometheus"
-          container_name: prometheus
-          volumes:
-             - "/opt/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
-          ports:
-            - "9090:9090"
+# - name: Create the docker compose file
+#   copy:
+#     dest: /opt/docker-compose.yml
+#     content: |
+#       version: '3.7'
+#       services:
+#         prometheus:
+#           image: "prom/prometheus"
+#           container_name: prometheus
+#           volumes:
+#              - "/opt/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
+#           ports:
+#             - "9090:9090"
 
-        node_exporter:
-          image: "prom/node-exporter"
-          container_name: node_exporter
-          ports:
-            - "9100:9100"
+#         node_exporter:
+#           image: "prom/node-exporter"
+#           container_name: node_exporter
+#           ports:
+#             - "9100:9100"
 
-        grafana:
-          image: "grafana/grafana"
-          container_name: grafana
-          ports:
-            - "3100:3000"
-          environment:
-            - "GF_SECURITY_ADMIN_PASSWORD=1234"
-            - "GF_AUTH_ANONYMOUS_ENABLED=true"
-        dashboard:
-          image: jchaipas/dashboardtvfsd:latest
-          container_name: dashboard
-          volumes:
-             - "/opt/freezeDates.json:/app/public/freezeDates.json"
-             - "/opt/.env:/app/.env"
-          ports:
-            - 80:3000
-  become: true
+#         grafana:
+#           image: "grafana/grafana"
+#           container_name: grafana
+#           ports:
+#             - "3100:3000"
+#           environment:
+#             - "GF_SECURITY_ADMIN_PASSWORD=1234"
+#             - "GF_AUTH_ANONYMOUS_ENABLED=true"
+#         dashboard:
+#           image: jchaipas/dashboardtvfsd:latest
+#           container_name: dashboard
+#           volumes:
+#              - "/opt/freezeDates.json:/app/public/freezeDates.json"
+#              - "/opt/.env:/app/.env"
+#           ports:
+#             - 80:3000
+#   become: true
 
-- name: Stop dashboard
-  command: sudo docker stop dashboard
-  ignore_errors: true
+# - name: Stop dashboard
+#   command: sudo docker stop dashboard
+#   ignore_errors: true
 
-- name: Pull dashboard image
-  command: sudo docker pull --platform=linux/arm/v7 jchaipas/dashboardtvfsd:latest
-  become: true
+# - name: Pull dashboard image
+#   command: sudo docker pull --platform=linux/arm/v7 jchaipas/dashboardtvfsd:latest
+#   become: true
 
-- name: Start containers
-  shell: sudo docker-compose -f /opt/docker-compose.yml up -d
-  become: yes
+# - name: Start containers
+#   shell: sudo docker-compose -f /opt/docker-compose.yml up -d
+#   become: yes
 
-# - include_tasks:
-#     file: relaunchbrowser.yml
+- include_tasks:
+    file: setupOs.yml

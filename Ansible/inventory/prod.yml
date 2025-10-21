@@ -1,5 +1,5 @@
 all:
   hosts:
     dashboard:
-      ansible_host: 128.178.116.193
-      ansible_user: dashboard
+      ansible_host: 128.178.116.79
+      ansible_user: pi
