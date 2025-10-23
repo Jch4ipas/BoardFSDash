@@ -5,8 +5,8 @@ import { NextResponse } from "next/server";
 const { auth } = NextAuth(authConfig);
 
 export default async function middleware(req) {
+  const isAllowed = process.env.ALLOW_EXTERNAL_ACCESS === "true";
   const ipHeader = req.headers.get('x-epfl-internal');
-  let isAllowed = false;
   if (ipHeader == "TRUE") {
     isAllowed = true;
   }
