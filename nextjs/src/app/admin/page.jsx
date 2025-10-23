@@ -658,7 +658,7 @@ export default function BackOffice() {
                                     onDrop={() => handleDrop(box.id)}
                                     onMouseEnter={() => setHoveredBoxId(box.id)}
                                     onMouseLeave={() => setHoveredBoxId(null)}
-                                    className={`border border-gray-600 rounded-3xl flex justify-center items-center text-white font-bold shadow-md p-2 cursor-pointer transition-all duration-150 hover:scale-105 hover:border-blue-500 hover:bg-blue-900/30`}
+                                    className={`border border-gray-600 rounded-3xl flex justify-center items-center font-bold shadow-md p-2 cursor-pointer transition-all duration-150 hover:scale-105 hover:border-blue-500 hover:bg-blue-900/30`}
                                     style={{
                                         gridColumn: `${box.x} / span ${box.width}`,
                                         gridRow: `${box.y} / span ${box.height}`,
@@ -673,7 +673,7 @@ export default function BackOffice() {
                                             {/* Conteneur pour les boutons à droite */}
                                             <div className="absolute top-1/2 -translate-y-1/2 right-1 flex flex-col gap-1">
                                                 <button
-                                                    className="bg-blue-600 hover:bg-blue-700 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-md"
+                                                    className="bg-blue-600 hover:bg-blue-700 rounded-full w-6 h-6 flex items-center justify-center shadow-md"
                                                     onClick={(e) => {
                                                         e.stopPropagation();
                                                         handleStretchedBox(box.id, true, true);

@@ -81,12 +81,12 @@ export default function NextFreeze() {
     {currentFreeze && (
       <div style={{ width: '100%', maxWidth: '500px' }}>
         <p style={{ fontSize: '1.8rem', fontWeight: 'bold', margin: 0 }}>
-          <span style={{ color: '#FFFFFF' }}>En Freeze</span>
+          <span>En Freeze</span>
         </p>
         <p style={{ margin: '0.5rem 0', fontSize: '1.2rem' }}>
           jusqu’au <strong>{new Date(currentFreeze.end).toLocaleDateString('fr-CH')}</strong>
         </p>
-        <p style={{ color: '#FFFFFF', fontSize: '1rem', margin: 0 }}>
+        <p style={{ fontSize: '1rem', margin: 0 }}>
           {currentFreeze.description}
         </p>
       </div>
@@ -106,7 +106,7 @@ export default function NextFreeze() {
               <>
                 <p style={{ fontSize: '1.4rem', marginBottom: '2rem' }}>
                   Prochain freeze dans{' '}
-                  <strong style={{ fontSize: '1.6rem', color: '#FFFFFF' }}>
+                  <strong style={{ fontSize: '1.6rem' }}>
                     {daysUntilNextFreeze}
                   </strong>{' '}
                   jour{daysUntilNextFreeze > 1 ? 's' : ''}
@@ -128,7 +128,7 @@ export default function NextFreeze() {
         {nextNextFreeze && (
           <div>
             <p style={{ fontSize: '1rem', margin: 0 }}>
-              <span style={{ color: '#FFFFFF', fontWeight: 'bold' , marginBottom: '0.3rem', marginTop: '0.3rem', display: 'inline-block'  }}>
+              <span style={{ fontWeight: 'bold' , marginBottom: '0.3rem', marginTop: '0.3rem', display: 'inline-block'  }}>
                 {nextFreeze ? 'Et' : 'Prochain freeze'}
               </span><br />
               <strong>{new Date(nextNextFreeze.start).toLocaleDateString('fr-CH')}</strong> au{' '}
