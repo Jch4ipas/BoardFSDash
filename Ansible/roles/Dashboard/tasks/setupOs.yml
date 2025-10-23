@@ -29,8 +29,7 @@
     regexp: '^LANG='
     line: 'LANG=fr_CH.UTF-8'
 
-
-- name: Change web page
+- name: Change web page # seul endroit pour changer quelle site est afficher sur la télé (l'os : fullpageOS)
   copy:
     dest: /boot/firmware/fullpageos.txt
     content: |
