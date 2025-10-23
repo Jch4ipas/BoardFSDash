@@ -9,6 +9,7 @@ import LatestWordPressVersion from "@/services/wordpresslastversion";
 import NextFreeze from "@/components/freeze";
 import Salleinfo from "@/services/Salleinfo";
 import { all } from "axios";
+import './globals.css';
 
 export default function Home() {
 
@@ -95,12 +96,12 @@ export default function Home() {
 
 
   return (
-      <div className="h-screen w-full">
+      <div className="h-screen w-full home-page">
         <div className="grid grid-cols-6 grid-rows-4 gap-2 w-full h-full p-2">
           {Array.isArray(selectedContainer) && selectedContainer.map((box) => (
             <div
               key={box.id}
-              className={`border border-gray-600 rounded-3xl justify-center items-center text-white font-bold shadow-md p-2`}
+              className={`border border-gray-600 rounded-3xl justify-center items-center font-bold shadow-md p-2`}
               style={{
                 gridColumn: `${box.x} / span ${box.width}`,
                 gridRow: `${box.y} / span ${box.height}`,
