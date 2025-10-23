@@ -2,8 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+ :root {
+  color-scheme: light dark;
+  background-color: canvas;
+  color: canvastext;
+}
 body {
-  color: var(--foreground);
-  background: var(--background);
+  margin: 0;
+  padding: 0;
+  background-color: inherit;
+  color: inherit;
   font-family: Arial, Helvetica, sans-serif;
+}
+.home-page {
+  background-color: black;
+  color: white;
+  min-height: 100vh;
 }
