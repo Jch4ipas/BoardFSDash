@@ -9,7 +9,7 @@ export default async function AdminLayout({ children }) {
   return (
     <div className="admin-layout">
       <div>
-        <div className="m-2 navbar bg-base-100 shadow-sm text-white bg-blue-500 rounded-xl">
+        <div className="navbar bg-base-100 shadow-sm text-white bg-blue-500">
           <div className="navbar-start">
             <div className="dropdown">
               <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
@@ -25,7 +25,7 @@ export default async function AdminLayout({ children }) {
             </div>
           </div>
           <div className="navbar-center">
-            <a href="/admin" className="btn btn-ghost text-xl">DashFSBoard</a>
+            <a href="/admin" className="btn btn-ghost text-xl">BoardFSDash</a>
           </div>
           <div className="navbar-end">
           <SessionDropdown session={session} />
