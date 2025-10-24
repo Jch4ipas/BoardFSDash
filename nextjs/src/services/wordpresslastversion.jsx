@@ -21,8 +21,8 @@ export default function LatestWordPressVersion() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center text-xl font-bold p-20 min-h-screen">
-      <h2 className="text-xl font-bold mb-2">
+    <div className="flex flex-col items-center justify-center text-xl font-bold w-full h-full p-4 text-center">
+      <h2 className="text-xl mb-2">
         Wordpress Version :
       </h2>
       {version ? (
