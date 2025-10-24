@@ -25,8 +25,6 @@ export default function BackOffice() {
     const [showPropModal, setShowPropModal] = useState(false);
     const [showNotEnoughSpaceForNewBoxModal, setShowNotEnoughSpaceForNewBoxModal] = useState(false);
     const [newPropValue, setNewPropValue] = useState("");
-    const [gridColumn, setGridColumn] = useState(6);
-    const [gridRow, setGridRow] = useState(4);
     const [draggedBoxId, setDraggedBoxId] = useState(null);
     const [hoveredBoxId, setHoveredBoxId] = useState(null);
 
@@ -68,14 +66,16 @@ export default function BackOffice() {
         }
     }, [currentContainer, activeBox]);
 
-    useEffect(() => {
-        console.log("Current Container id changed", currentContainerWithEverything.name);
+    const handleModifyCurrentContainerWithEverything = async (value, key) => {
+        const theCurrentContainerWithEverything = { ...currentContainerWithEverything, [key]: value };
+        console.table(theCurrentContainerWithEverything);
+        setCurrentContainerWithEverything({ ...currentContainerWithEverything, [key]: value });
         setBoxSerializable(prev =>
             prev.map((container, index) =>
-                index === selectedContainer ? currentContainerWithEverything : container
+                index === selectedContainer ? theCurrentContainerWithEverything : container
             )
         );
-    }, [currentContainerWithEverything.name, currentContainerWithEverything.isGoingToDisplay, currentContainerWithEverything.durationDisplay]);
+    };
 
     const handleSave = async (array) => {
         if (await saveData(array)) {
@@ -100,7 +100,7 @@ export default function BackOffice() {
         const lastId = currentContainer.length > 0
             ? Math.max(...currentContainer.map(box => box.id))
             : 0;
-        const position = findNextAvailablePosition(currentContainer, 1, 1, gridColumn, gridRow);
+        const position = findNextAvailablePosition(currentContainer, 1, 1, currentContainerWithEverything.gridWidth, currentContainerWithEverything.gridHeight);
         if (!position) {
             setShowNotEnoughSpaceForNewBoxModal(true);
         } else {
@@ -141,7 +141,7 @@ export default function BackOffice() {
         const lastId = boxSerializable.length > 0
             ? Math.max(...boxSerializable.map(container => container.id))
             : 0;
-        setBoxSerializable([...boxSerializable, { id: lastId + 1, name: "New Container", isGoingToDisplay: false, durationDisplay: 30, boxes: [] }]); // Creating new Container with default values
+        setBoxSerializable([...boxSerializable, { id: lastId + 1, name: "New Container", isGoingToDisplay: false, durationDisplay: 30, gridHeight: 4, gridWidth: 6, boxes: [] }]); // Creating new Container with default values
         setSelectedContainer(boxSerializable.length);
     };
     const handleDeleteContainer = () => {
@@ -370,7 +370,7 @@ export default function BackOffice() {
                             className="text-2xl font-bold bg-transparent border-none focus:outline-none"
                             type="text"
                             value={currentContainerWithEverything?.name || ""}
-                            onChange={(e) => setCurrentContainerWithEverything({ ...currentContainerWithEverything, name: e.target.value })} />
+                            onChange={(e) => handleModifyCurrentContainerWithEverything(e.target.value, "name")} />
                         <h2 className="text-sm text-gray-500">
                             ID: {currentContainerWithEverything.id}
                         </h2>
@@ -382,7 +382,7 @@ export default function BackOffice() {
                                 className=""
                                 type="checkbox"
                                 checked={currentContainerWithEverything?.isGoingToDisplay || false}
-                                onChange={(e) => setCurrentContainerWithEverything({ ...currentContainerWithEverything, isGoingToDisplay: e.target.checked })} />
+                                onChange={(e) => handleModifyCurrentContainerWithEverything(e.target.checked, "isGoingToDisplay")} />
                         </div>
                         <div className="form-control w-full">
                             <label className="label">
@@ -392,7 +392,8 @@ export default function BackOffice() {
                                 className="input input-bordered input-primary w-full"
                                 type="number"
                                 value={currentContainerWithEverything?.durationDisplay || ""}
-                                onChange={(e) => setCurrentContainerWithEverything({ ...currentContainerWithEverything, durationDisplay: e.target.value })} />
+                                onChange={(e) => handleModifyCurrentContainerWithEverything(e.target.value, "durationDisplay")} />
+                        </div>
                         </div>
 
                     </div>
