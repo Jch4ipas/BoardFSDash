@@ -109,6 +109,7 @@ export default function BackOffice() {
             handleUpdateContainer(updatedContainer);
             // setCurrentContainer(updatedContainer);
             setBoxe(buildBoxes(updatedContainer));
+            setActiveBox(lastId);
             console.log("New Box");
         }
     };
