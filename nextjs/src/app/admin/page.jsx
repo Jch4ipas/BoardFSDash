@@ -88,9 +88,6 @@ export default function BackOffice() {
     }, [activeBox])
 
     useEffect(() => {
-        if (currentContainer.length > 0 && !currentContainer.some(box => box.id === activeBox)) {
-            setActiveBox(currentContainer[0].id);
-        }
         setBoxe(buildBoxes(currentContainer));
     }, [currentContainer]);
 
@@ -137,24 +134,23 @@ export default function BackOffice() {
             console.log("New Box");
         }
     };
-    const handleDeleteBox = () => {
+    const handleDeleteBox = async () => {
+        const index = currentContainer.findIndex((box) => box.id === activeBox);
+        const notUpdatedContainer = currentContainer;
         const updatedContainer = currentContainer.filter((box) => box.id !== activeBox);
-        handleUpdateContainer(updatedContainer);
-        // setBoxSerializable(prev =>
-        //     prev.map((container, index) =>
-        //         index === selectedContainer ? updatedContainer : container
-        //     )
-        // );
+        await handleUpdateContainer(updatedContainer);
         setBoxe(buildBoxes(updatedContainer));
+        // const gridWithId = Array.from(notUpdatedContainer.id);
+        if (updatedContainer.length > 0) {
+            const newIndex = index > 0 ? index - 1 : 0;
+            const newBoxId = updatedContainer[newIndex].id;
+            setActiveBox(newBoxId);
+            setTimeout(() => {
+                const element = document.getElementById(`box-${newBoxId}`);
+                element?.focus();
+            }, 0);
+        }
     };
-    useEffect(() => {
-        console.log("Current Container id changed", currentContainerWithEverything.name);
-        setBoxSerializable(prev =>
-            prev.map((container, index) =>
-                index === selectedContainer ? currentContainerWithEverything : container
-            )
-        );
-    }, [currentContainerWithEverything.name, currentContainerWithEverything.isGoingToDisplay, currentContainerWithEverything.durationDisplay]);
     const handleUpdateBox = () => {
         const updatedContainer = currentContainer.map(box => box.id === activeBox ? selectedBox : box);
         handleUpdateContainer(updatedContainer);
@@ -277,6 +273,17 @@ export default function BackOffice() {
         // );
         handleUpdateContainer(updatedContainer);
     };
+
+    const handleDeleteBoxBackspaceKeyDown = (event, idBox) => {
+        if (event.key == "Backspace") {
+            event.preventDefault();
+            if (idBox == activeBox) {
+                handleDeleteBox();
+                console.log("Box supprimée :", idBox);
+            }
+        }
+        console.log("suppresion de la div" + event.key);
+    }
 
     return (
         <div className="min-h-screen flex flex-col bg-base-200">
@@ -653,17 +660,27 @@ export default function BackOffice() {
                                 <div
                                     key={index}
                                     draggable
+                                    tabIndex={0}
+                                    id={`box-${box.id}`}
+                                    onFocus={() => setActiveBox(box.id)}
+                                    
                                     onDragStart={() => setDraggedBoxId(box.id)}
                                     onDragOver={e => e.preventDefault()}
                                     onDrop={() => handleDrop(box.id)}
                                     onMouseEnter={() => setHoveredBoxId(box.id)}
                                     onMouseLeave={() => setHoveredBoxId(null)}
-                                    className={`border border-gray-600 rounded-3xl flex justify-center items-center font-bold shadow-md p-2 cursor-pointer transition-all duration-150 hover:scale-105 hover:border-blue-500 hover:bg-blue-900/30`}
+                                    className={`border border-gray-600 rounded-3xl flex justify-center items-center font-bold shadow-md p-2 cursor-pointer transition-all duration-150 hover:scale-105 hover:border-blue-500 hover:bg-blue-900/30 focus:border-blue-500 focus:bg-blue-900/30 focus:scale-105`}
                                     style={{
                                         gridColumn: `${box.x} / span ${box.width}`,
                                         gridRow: `${box.y} / span ${box.height}`,
                                     }}
-                                    onClick={() => setActiveBox(box.id)}
+                                    onClick={(e) => {
+                                        setActiveBox(box.id)
+                                        // e.currentTarget.focus()
+                                        const element = document.getElementById(`box-${box.id}`);
+                                        element?.focus()
+                                    }}
+                                    onKeyDown={(e) => handleDeleteBoxBackspaceKeyDown(e, box.id)}
                                 >
                                     <div className="w-full h-full flex items-center justify-center overflow-hidden rounded-2xl">
                                         {box.content}
