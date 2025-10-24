@@ -29,48 +29,8 @@ export default function BackOffice() {
     const [gridRow, setGridRow] = useState(4);
     const [draggedBoxId, setDraggedBoxId] = useState(null);
     const [hoveredBoxId, setHoveredBoxId] = useState(null);
-    // const allBoxSets = [boxe];
-    // const currentBoxes = allBoxSets[activeBoxSet];
-    const box1 = [
-        { id: 1, width: 2, height: 4, content: <iframe src="https://actu.epfl.ch/?dashboardfr" className="w-full h-full"></iframe> },
-        { id: 2, width: 2, height: 1, content: <Salleinfo room={"INN011"}></Salleinfo> },
-        { id: 3, width: 1, height: 1, content: <LatestWordPressVersion></LatestWordPressVersion> },
-        { id: 4, width: 1, height: 1, content: <Clock></Clock> },
-        { id: 5, width: 2, height: 1, content: <Salleinfo room={"INN033"}></Salleinfo> },
-        { id: 6, width: 2, height: 2, content: <NasaMedia></NasaMedia> },
-        { id: 7, width: 2, height: 1, content: <Salleinfo room={"INN041"}></Salleinfo> },
-        { id: 8, width: 1, height: 1 },
-        { id: 9, width: 1, height: 1, content: <></> },
-        { id: 10, width: 2, height: 1, content: <NextFreeze></NextFreeze> },
-    ];
-    const box2 = [
-        { id: 1, width: 5, height: 1, content: <video autoplay muted loop id="myVideo"></video> },
-        { id: 2, width: 1, height: 1, content: <Clock></Clock> },
-        { id: 3, width: 6, height: 3, content: <h1>WPN</h1> },
-    ];
-    const box3 = [
-        { id: 1, width: 6, height: 4, content: <iframe src="https://sdesk-monitoring.epfl.ch/" className="w-full h-full"></iframe> }
-    ];
+
     useEffect(() => {
-        // setBoxSerializable([[
-        //     { id: 1, width: 2, height: 4, type: "iframe", props: { src: "https://actu.epfl.ch/?dashboardfr", className: "w-full h-full" } },
-        //     { id: 2, width: 2, height: 1, type: "Salleinfo", props: { room: "INN011" } },
-        //     { id: 3, width: 1, height: 1, type: "LatestWordPressVersion" },
-        //     { id: 4, width: 1, height: 1, type: "Clock" },
-        //     { id: 5, width: 2, height: 1, type: "Salleinfo", props: { room: "INN033" } },
-        //     { id: 6, width: 2, height: 2, type: "NasaMedia" },
-        //     { id: 7, width: 2, height: 1, type: "Salleinfo", props: { room: "INN041" } },
-        //     { id: 8, width: 1, height: 1, type: "" },
-        //     { id: 9, width: 1, height: 1, type: "" },
-        //     { id: 10, width: 2, height: 1, type: "NextFreeze" },
-        // ], [
-        //     { id: 1, width: 5, height: 1, type: "video", props: { autoplay: true, muted: true, loop: true, id: "myVideo" } },
-        //     { id: 2, width: 1, height: 1, type: "Clock" },
-        //     { id: 3, width: 6, height: 3, type: "h1", props: { children: "WPN" } },
-        // ], [
-        //     { id: 1, width: 6, height: 4, type: "iframe", props: { src: "https://sdesk-monitoring.epfl.ch/", className: "w-full h-full" } }
-        // ]
-        // ]);
         handleLoad();
     }, [])
     useEffect(() => {
@@ -108,16 +68,34 @@ export default function BackOffice() {
         }
     }, [currentContainer, activeBox]);
 
+    useEffect(() => {
+        console.log("Current Container id changed", currentContainerWithEverything.name);
+        setBoxSerializable(prev =>
+            prev.map((container, index) =>
+                index === selectedContainer ? currentContainerWithEverything : container
+            )
+        );
+    }, [currentContainerWithEverything.name, currentContainerWithEverything.isGoingToDisplay, currentContainerWithEverything.durationDisplay]);
+
     const handleSave = async (array) => {
         if (await saveData(array)) {
             alert("Save !!");
         }
-    }
+    };
     const handleLoad = async () => {
         const res = await loadData();
         setBoxSerializable(res);
         setBoxe(buildBoxes(res));
-    }
+    };
+    const handleUpdateContainer = async (thecurrentcontainer) => {
+        const updatedContainerWithEverything = { ...currentContainerWithEverything, boxes: thecurrentcontainer };
+        setBoxSerializable(prev =>
+            prev.map((container, index) =>
+                index === selectedContainer ? updatedContainerWithEverything : container
+            )
+        );
+        console.log("Update Container with everything");
+    };
     const handleNewBox = () => {
         const lastId = currentContainer.length > 0
             ? Math.max(...currentContainer.map(box => box.id))
@@ -154,22 +132,8 @@ export default function BackOffice() {
     const handleUpdateBox = () => {
         const updatedContainer = currentContainer.map(box => box.id === activeBox ? selectedBox : box);
         handleUpdateContainer(updatedContainer);
-        // setBoxSerializable(prev =>
-        //     prev.map((container, index) =>
-        //         index === selectedContainer ? updatedContainer : container
-        //     )
-        // ); // --------------------------------------------------------------------- here - i - work --------------------------------------------------------------------
         setBoxe(buildBoxes(updatedContainer));
         console.log("Update Box");
-    };
-    const handleUpdateContainer = (thecurrentcontainer) => {
-        const updatedContainerWithEverything = { ...currentContainerWithEverything, boxes: thecurrentcontainer };
-        setBoxSerializable(prev =>
-            prev.map((container, index) =>
-                index === selectedContainer ? updatedContainerWithEverything : container
-            )
-        );
-        console.log("Update Container with everything");
     };
     const handleNewContainer = () => {
         console.log("New Container");
