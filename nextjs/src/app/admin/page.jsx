@@ -394,8 +394,26 @@ export default function BackOffice() {
                                 value={currentContainerWithEverything?.durationDisplay || ""}
                                 onChange={(e) => handleModifyCurrentContainerWithEverything(e.target.value, "durationDisplay")} />
                         </div>
+                        <div className="form-control w-full">
+                            <label className="label">
+                                <span className="label-text font-medium">Grid Height</span>
+                            </label>
+                            <input
+                                className="input input-bordered input-primary w-full"
+                                type="number"
+                                value={currentContainerWithEverything?.gridHeight || ""}
+                                onChange={(e) => handleModifyCurrentContainerWithEverything(parseInt(e.target.value), "gridHeight")} />
                         </div>
-
+                        <div className="form-control w-full">
+                            <label className="label">
+                                <span className="label-text font-medium">Grid Width</span>
+                            </label>
+                            <input
+                                className="input input-bordered input-primary w-full"
+                                type="number"
+                                value={currentContainerWithEverything?.gridWidth || ""}
+                                onChange={(e) => handleModifyCurrentContainerWithEverything(parseInt(e.target.value), "gridWidth")} />
+                        </div>
                     </div>
                     <div className="flex-1 rounded-lg p-4 bg-base-100 overflow-y-auto">
                         {currentContainer.length === 0 ? (
@@ -621,7 +639,13 @@ export default function BackOffice() {
                         <h2 className="text-lg font-semibold"></h2>
                     </div>
                     <div className="w-[100%] rounded-lg p-4 bg-base-100 h-[70%]">
-                        <div className={`grid grid-cols-${gridColumn} grid-rows-${gridRow} gap-2 w-full h-full p-2`}>
+                        <div 
+                            className={`grid gap-2 w-full h-full p-2`}
+                            style={{
+                                gridTemplateColumns: `repeat(${currentContainerWithEverything.gridWidth || 1}, 1fr)`,
+                                gridTemplateRows: `repeat(${currentContainerWithEverything.gridHeight || 1}, 1fr)`
+                            }}
+                            >
                             {boxe.map((box, index) => (
                                 <div
                                     key={index}
@@ -637,8 +661,8 @@ export default function BackOffice() {
                                     onMouseLeave={() => setHoveredBoxId(null)}
                                     className={`border border-gray-600 rounded-3xl flex justify-center items-center font-bold shadow-md p-2 cursor-pointer transition-all duration-150 hover:scale-105 hover:border-blue-500 hover:bg-blue-900/30 focus:border-blue-500 focus:bg-blue-900/30 focus:scale-105`}
                                     style={{
-                                        gridColumn: `${box.x} / span ${box.width}`,
-                                        gridRow: `${box.y} / span ${box.height}`,
+                                        gridColumn: `${Number(box.x)} / span ${Number(box.width)}`,
+                                        gridRow: `${Number(box.y)} / span ${Number(box.height)}`,
                                     }}
                                     onClick={(e) => {
                                         setActiveBox(box.id)
