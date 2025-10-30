@@ -57,94 +57,79 @@ export default function NextFreeze() {
   }, []);
 
   return (
-  <div
-    style={{
-      display: 'flex',
-      flexDirection:
-        currentFreeze && (nextFreeze || nextNextFreeze) ? 'row' : 'column',
-      justifyContent:
-        currentFreeze && (nextFreeze || nextNextFreeze)
-          ? 'space-between'
-          : 'center',
-      alignItems:
-        currentFreeze && (nextFreeze || nextNextFreeze)
-          ? 'center'
-          : 'flex-start',
-      padding: '1rem',
-      gap: '2rem',
-      fontFamily: 'Arial, sans-serif',
-      color: '#c3c3c3',
-      textAlign: 'left',
-      minHeight: '200px',
-    }}
-  >
-    {currentFreeze && (
-      <div style={{ width: '100%', maxWidth: '500px' }}>
-        <p style={{ fontSize: '1.8rem', fontWeight: 'bold', margin: 0 }}>
-          <span>En Freeze</span>
-        </p>
-        <p style={{ margin: '0.5rem 0', fontSize: '1.2rem' }}>
-          jusqu’au <strong>{new Date(currentFreeze.end).toLocaleDateString('fr-CH')}</strong>
-        </p>
-        <p style={{ fontSize: '1rem', margin: 0 }}>
-          {currentFreeze.description}
-        </p>
-      </div>
-    )}
+    <div
+      className="flex flex-col justify-center items-start w-full h-full p-2 text-gray-300"
+      style={{
+        fontFamily: 'Arial, sans-serif',
+        fontSize: '1rem',
+        gap: '0.5rem',
+        overflow: 'hidden',
+        textAlign: 'left',
+      }}
+    >
+      {currentFreeze && (
+        <div className="w-full">
+          <p className="text-lg font-bold m-0">En Freeze</p>
+          <p className="text-sm m-0">
+            jusqu’au <strong>{new Date(currentFreeze.end).toLocaleDateString('fr-CH')}</strong>
+          </p>
+          <p className="text-xs m-0 text-gray-400">{currentFreeze.description}</p>
+        </div>
+      )}
 
-    {(nextFreeze || nextNextFreeze) && (
-      <div style={{ width: '100%', maxWidth: '500px' }}>
-        {nextFreeze && (
-          <>
-            {currentFreeze ? (
-              <p style={{ fontSize: '1rem' }}>
-                Prochain freeze :<br />
-                <strong style={{ display: 'inline-block' , marginTop: "1.5rem" }}>{new Date(nextFreeze.start).toLocaleDateString('fr-CH')}</strong> au{' '}
-                <strong>{new Date(nextFreeze.end).toLocaleDateString('fr-CH')}</strong>
-              </p>
-            ) : (
-              <>
-                <p style={{ fontSize: '1.4rem', marginBottom: '2rem' }}>
-                  Prochain freeze dans{' '}
-                  <strong style={{ fontSize: '1.6rem' }}>
-                    {daysUntilNextFreeze}
+      {(nextFreeze || nextNextFreeze) && (
+        <div className="w-full">
+          {nextFreeze && (
+            <>
+              {currentFreeze ? (
+                <p className="text-sm">
+                  Prochain freeze :
+                  <br />
+                  <strong className="inline-block mt-2">
+                    {new Date(nextFreeze.start).toLocaleDateString('fr-CH')}
                   </strong>{' '}
-                  jour{daysUntilNextFreeze > 1 ? 's' : ''}
-                </p>
-                <p style={{ fontSize: '1rem', margin: 0 }}>
-                  <strong>{new Date(nextFreeze.start).toLocaleDateString('fr-CH')}</strong> au{' '}
+                  au{' '}
                   <strong>{new Date(nextFreeze.end).toLocaleDateString('fr-CH')}</strong>
                 </p>
-              </>
-            )}
-            {nextFreeze.description && (
-              <p style={{fontStyle: 'italic', color: '#aaaaaa' }}>
-                {nextFreeze.description}
+              ) : (
+                <>
+                  <p className="text-base mb-2">
+                    Prochain freeze dans{' '}
+                    <strong className="text-lg">{daysUntilNextFreeze}</strong>{' '}
+                    jour{daysUntilNextFreeze > 1 ? 's' : ''}
+                  </p>
+                  <p className="text-sm m-0">
+                    <strong>{new Date(nextFreeze.start).toLocaleDateString('fr-CH')}</strong> au{' '}
+                    <strong>{new Date(nextFreeze.end).toLocaleDateString('fr-CH')}</strong>
+                  </p>
+                </>
+              )}
+              {nextFreeze.description && (
+                <p className="italic text-gray-400 text-xs">{nextFreeze.description}</p>
+              )}
+            </>
+          )}
+
+          {nextNextFreeze && (
+            <div>
+              <p className="text-sm m-0">
+                <span className="font-bold inline-block my-1">
+                  {nextFreeze ? 'Et' : 'Prochain freeze'}
+                </span>
+                <br />
+                <strong>{new Date(nextNextFreeze.start).toLocaleDateString('fr-CH')}</strong> au{' '}
+                <strong>{new Date(nextNextFreeze.end).toLocaleDateString('fr-CH')}</strong>
+                <br />
+                <span className="text-xs text-gray-400">{nextNextFreeze.description}</span>
               </p>
-            )}
-          </>
-        )}
+            </div>
+          )}
+        </div>
+      )}
 
-        {nextNextFreeze && (
-          <div>
-            <p style={{ fontSize: '1rem', margin: 0 }}>
-              <span style={{ fontWeight: 'bold' , marginBottom: '0.3rem', marginTop: '0.3rem', display: 'inline-block'  }}>
-                {nextFreeze ? 'Et' : 'Prochain freeze'}
-              </span><br />
-              <strong>{new Date(nextNextFreeze.start).toLocaleDateString('fr-CH')}</strong> au{' '}
-              <strong>{new Date(nextNextFreeze.end).toLocaleDateString('fr-CH')}</strong><br />
-              <span>{nextNextFreeze.description}</span>
-            </p>
-          </div>
-        )}
-      </div>
-    )}
-
-    {!currentFreeze && !nextFreeze && !nextNextFreeze && (
-      <p style={{ fontSize: '1rem', textAlign: 'center', width: '100%' }}>
-        Aucun freeze prévu prochainement.
-      </p>
-    )}
-  </div>
+      {!currentFreeze && !nextFreeze && !nextNextFreeze && (
+        <p className="text-sm text-center w-full">Aucun freeze prévu prochainement.</p>
+      )}
+    </div>
   );
 }

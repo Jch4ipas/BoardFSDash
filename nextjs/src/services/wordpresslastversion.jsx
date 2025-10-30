@@ -22,11 +22,9 @@ export default function LatestWordPressVersion() {
 
   return (
     <div className="flex flex-col items-center justify-center text-xl font-bold w-full h-full p-4 text-center">
-      <h2 className="text-xl mb-2">
-        Wordpress Version :
-      </h2>
+      <h2 className="text-lg mb-2">WordPress Version :</h2>
       {version ? (
-        <p style={{ fontSize: '2rem', padding: '1rem' }}>{version}</p>
+        <p className="text-2xl">{version}</p>
       ) : (
         <p className="text-gray-500">Chargement…</p>
       )}
