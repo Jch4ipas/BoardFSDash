@@ -3,13 +3,8 @@
 import { saveData } from "@/services/saveJSON";
 import { loadData } from "@/services/loadJSON";
 import { buildBoxes } from "@/components/buildBoxe"
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { registry } from "@/components/registry";
-import NasaMedia from "@/services/infonasa";
-import Clock from "@/components/Clock";
-import LatestWordPressVersion from "@/services/wordpresslastversion";
-import NextFreeze from "@/components/freeze";
-import Salleinfo from "@/services/Salleinfo";
 import Modal from "@/components/modal";
 
 export default function BackOffice() {
@@ -27,6 +22,7 @@ export default function BackOffice() {
     const [newPropValue, setNewPropValue] = useState("");
     const [draggedBoxId, setDraggedBoxId] = useState(null);
     const [hoveredBoxId, setHoveredBoxId] = useState(null);
+    const gridRef = useRef(null);
 
     useEffect(() => {
         handleLoad();
@@ -198,22 +194,6 @@ export default function BackOffice() {
         }
         return null;
     };
-    const handleDrop = (targetBoxId) => {
-        if (draggedBoxId === null || draggedBoxId === targetBoxId) return;
-        const draggedBox = currentContainer.find(box => box.id === draggedBoxId);
-        const targetBox = currentContainer.find(box => box.id === targetBoxId);
-        if (!draggedBox || !targetBox) return;
-
-        // Échange les positions x/y
-        const updatedContainer = currentContainer.map(box => {
-            if (box.id === draggedBoxId) return { ...box, x: targetBox.x, y: targetBox.y };
-            if (box.id === targetBoxId) return { ...box, x: draggedBox.x, y: draggedBox.y };
-            return box;
-        });
-
-        handleUpdateContainer(updatedContainer);
-        setDraggedBoxId(null);
-    };
 
     const handleStretchedBox = (boxId, isX, isAdding) => {
         if (boxId === null) return;
@@ -249,6 +229,66 @@ export default function BackOffice() {
         }
         console.log("suppresion de la div" + event.key);
     }
+
+    const handleDragStart = (id) => {
+        setDraggedBoxId(id);
+    };
+
+    const isCellOccupied = (x, y, width, height, idToIgnore = null) => {
+        return currentContainer.some((b) => {
+            if (b.id === idToIgnore) return false;
+            const bx1 = Number(b.x);
+            const by1 = Number(b.y);
+            const bw = Number(b.width);
+            const bh = Number(b.height);
+            return !(x + width - 1 < bx1 || x > bx1 + bw - 1 || y + height - 1 < by1 || y > by1 + bh - 1);
+        });
+    };
+    const moveBoxTo = (id, x, y) => {
+        const updated = currentContainer.map((b) =>
+            b.id === id ? { ...b, x, y } : b
+        );
+        handleUpdateContainer(updated);
+        setBoxe(buildBoxes(updated));
+    };
+    const handleDrop = (e, targetBoxId) => {
+        e.preventDefault();
+    if (!draggedBoxId) return;
+        if (targetBoxId) {
+            const draggedBox = currentContainer.find((b) => b.id === draggedBoxId);
+            const targetBox = currentContainer.find((b) => b.id === targetBoxId);
+            if (!draggedBox || !targetBox) return;
+            const updatedContainer = currentContainer.map((box) => {
+                if (box.id === draggedBoxId) return { ...box, x: targetBox.x, y: targetBox.y };
+                if (box.id === targetBoxId) return { ...box, x: draggedBox.x, y: draggedBox.y };
+                return box;
+            });
+            handleUpdateContainer(updatedContainer);
+            setDraggedBoxId(null);
+            return;
+        }
+
+        if (!gridRef.current) return;
+        const gridRect = gridRef.current.getBoundingClientRect();
+        const nbCols = currentContainerWithEverything?.gridWidth || 1;
+        const nbRows = currentContainerWithEverything?.gridHeight || 1;
+        const cellWidth = gridRect.width / nbCols;
+        const cellHeight = gridRect.height / nbRows;
+        const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX);
+        const clientY = e.clientY ?? (e.touches && e.touches[0]?.clientY);
+        let x = Math.floor((clientX - gridRect.left) / cellWidth) + 1;
+        let y = Math.floor((clientY - gridRect.top) / cellHeight) + 1;
+        x = Math.max(1, Math.min(nbCols, x));
+        y = Math.max(1, Math.min(nbRows, y));
+        const draggedBox = currentContainer.find((b) => b.id === draggedBoxId);
+        if (!draggedBox) {
+            setDraggedBoxId(null);
+            return;
+        }
+
+        if (!isCellOccupied(x, y, Number(draggedBox.width), Number(draggedBox.height), draggedBoxId)) {
+            moveBoxTo(draggedBoxId, x, y);
+        }
 
     return (
         <div className="min-h-screen flex flex-col bg-base-200">
