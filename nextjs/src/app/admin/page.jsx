@@ -679,13 +679,16 @@ export default function BackOffice() {
                         <h2 className="text-lg font-semibold"></h2>
                     </div>
                     <div className="w-[100%] rounded-lg p-4 bg-base-100 h-[70%]">
-                        <div 
+                        <div
+                            ref={gridRef}
+                            onDragOver={(e) => e.preventDefault()}
+                            onDrop={(e) => handleDrop(e)}
                             className={`grid gap-2 w-full h-full p-2`}
                             style={{
                                 gridTemplateColumns: `repeat(${currentContainerWithEverything.gridWidth || 1}, 1fr)`,
                                 gridTemplateRows: `repeat(${currentContainerWithEverything.gridHeight || 1}, 1fr)`
                             }}
-                            >
+                        >
                             {boxe.map((box, index) => (
                                 <div
                                     key={index}
@@ -693,10 +696,9 @@ export default function BackOffice() {
                                     tabIndex={0}
                                     id={`box-${box.id}`}
                                     onFocus={() => setActiveBox(box.id)}
-                                    
-                                    onDragStart={() => setDraggedBoxId(box.id)}
+                                    onDragStart={() => handleDragStart(box.id)}
                                     onDragOver={e => e.preventDefault()}
-                                    onDrop={() => handleDrop(box.id)}
+                                    onDrop={(e) => handleDrop(e, box.id)}
                                     onMouseEnter={() => setHoveredBoxId(box.id)}
                                     onMouseLeave={() => setHoveredBoxId(null)}
                                     className={`border border-gray-600 rounded-3xl flex justify-center items-center font-bold shadow-md p-2 cursor-pointer transition-all duration-150 hover:scale-105 hover:border-blue-500 hover:bg-blue-900/30 focus:border-blue-500 focus:bg-blue-900/30 focus:scale-105`}
