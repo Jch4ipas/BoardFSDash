@@ -289,6 +289,7 @@ export default function BackOffice() {
         if (!isCellOccupied(x, y, Number(draggedBox.width), Number(draggedBox.height), draggedBoxId)) {
             moveBoxTo(draggedBoxId, x, y);
         }
+    };
 
     return (
         <div className="min-h-screen flex flex-col bg-base-200">
