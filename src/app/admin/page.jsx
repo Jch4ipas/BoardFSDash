@@ -253,7 +253,7 @@ export default function BackOffice() {
     };
     const handleDrop = (e, targetBoxId) => {
         e.preventDefault();
-    if (!draggedBoxId) return;
+        if (!draggedBoxId) return;
         if (targetBoxId) {
             const draggedBox = currentContainer.find((b) => b.id === draggedBoxId);
             const targetBox = currentContainer.find((b) => b.id === targetBoxId);
