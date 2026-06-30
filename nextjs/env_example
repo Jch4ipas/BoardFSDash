@@ -1,0 +1,9 @@
+NASA_API_KEY= #Here Nasa Api Key
+TENANT_ID= #Here Graph tenant ID
+CLIENT_ID= #Here client ID
+CLIENT_SECRET= #Here client secret
+AUTH_SECRET=#Here Auth secret
+AUTH_MICROSOFT_ENTRA_ID_ID=#Here Microsoft Entra ID
+AUTH_MICROSOFT_ENTRA_ID_SECRET=#Here Microsoft Entra ID Secret
+AUTH_MICROSOFT_ENTRA_ID_ISSUER=#Here Microsoft Entra ID Issuer
+ALLOW_EXTERNAL_ACCESS= #Put true if you want to people have access out of epfl network or if you are coding and put false or anything else if you want to everybody have access
