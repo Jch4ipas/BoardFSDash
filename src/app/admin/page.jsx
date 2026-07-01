@@ -562,9 +562,9 @@ export default function BackOffice() {
                                     onDrop={(e) => handleDrop(e, box.id)}
                                     onMouseEnter={() => setHoveredBoxId(box.id)}
                                     onMouseLeave={() => setHoveredBoxId(null)}
-                                    className={`relative rounded-2xl flex justify-center items-center font-bold cursor-pointer transition-all duration-150 p-2 border-2
+                                    className={`relative rounded-2xl flex justify-center items-center font-bold cursor-pointer transition-all duration-150 p-2 border-2 outline-none focus:outline-none focus-visible:outline-none
                                         ${isActive
-                                            ? "border-primary bg-primary/5 ring-2 ring-primary/20 scale-[1.02]"
+                                            ? "border-primary bg-primary/5 ring-2 ring-[#FF0000]/20 scale-[1.02]"
                                             : "border-epfl-perle hover:border-epfl-turquoise/60 hover:bg-epfl-turquoise/5"
                                         }`}
                                     style={{
