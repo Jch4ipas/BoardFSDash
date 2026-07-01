@@ -2,17 +2,86 @@
 @tailwind components;
 @tailwind utilities;
 
- :root {
+:root {
   color-scheme: light dark;
   background-color: canvas;
   color: canvastext;
+
+  /* EPFL visual identity — https://inside.epfl.ch/corp-id/ */
+  --epfl-red: #FF0000;
+  --epfl-groseille: #B51F1F;
+  --epfl-turquoise: #00A79F;
+  --epfl-canard: #007480;
+  --epfl-montrose: #F39869;
+  --epfl-perle: #CAC7C7;
+  --epfl-vertdeau: #C2DDB0;
+  --epfl-rose: #ED6E9C;
+  --epfl-acier: #4F8FCC;
+  --epfl-soufre: #FBEE66;
+  --epfl-carotte: #EC6608;
+  --epfl-zinzolin: #5C2483;
+  --epfl-chartreuse: #C8D300;
+  --epfl-marron: #5B3428;
+  --epfl-ardoise: #453A4C;
+  --epfl-taupe: #413D3A;
 }
+
+/*
+ * EPFL backoffice theme.
+ *
+ * DaisyUI 5 no longer reads the `daisyui.themes` object from tailwind.config
+ * (that was a v4 feature, and v5 expects CSS-based config which needs the
+ * Tailwind v4 `@plugin` syntax we don't have here). So without this block
+ * `data-theme="epfl"` matches nothing and the admin area falls back to
+ * DaisyUI's default light/dark theme — turning black on a dark-mode OS.
+ *
+ * We therefore map the DaisyUI v5 semantic `--color-*` tokens to the EPFL
+ * palette by hand. Radius tokens keep DaisyUI's default rounded corners.
+ */
+[data-theme="epfl"] {
+  color-scheme: light;
+
+  --color-base-100: #ffffff;
+  --color-base-200: #f8f8f8;
+  --color-base-300: #e5e5e5;
+  --color-base-content: #413d3a;
+
+  --color-primary: #ff0000;
+  --color-primary-content: #ffffff;
+  --color-secondary: #00a79f;
+  --color-secondary-content: #ffffff;
+  --color-accent: #4f8fcc;
+  --color-accent-content: #ffffff;
+  --color-neutral: #453a4c;
+  --color-neutral-content: #ffffff;
+
+  --color-info: #4f8fcc;
+  --color-info-content: #ffffff;
+  --color-success: #00a79f;
+  --color-success-content: #ffffff;
+  --color-warning: #ec6608;
+  --color-warning-content: #ffffff;
+  --color-error: #b51f1f;
+  --color-error-content: #ffffff;
+
+  /* Rounded corners — DaisyUI v5 defaults (matches the dashboard look) */
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
 body {
   margin: 0;
   padding: 0;
   background-color: inherit;
   color: inherit;
-  font-family: Arial, Helvetica, sans-serif;
+  /* Suisse Intl — EPFL brand typeface, with system sans-serif fallbacks */
+  font-family: var(--font-suisse), "Helvetica Neue", Arial, Helvetica, sans-serif;
 }
 .home-page {
   background-color: black;

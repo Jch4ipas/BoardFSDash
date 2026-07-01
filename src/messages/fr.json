@@ -1,0 +1,59 @@
+{
+  "header": {
+    "nav": {
+      "dashboard": "Vue dashboard",
+      "backoffice": "BackOffice"
+    },
+    "signOut": "Se déconnecter",
+    "profile": "Profil",
+    "settings": "Paramètres"
+  },
+  "admin": {
+    "newContainer": "Nouveau",
+    "save": "Enregistrer",
+    "saved": "Enregistré !",
+    "containers": "Conteneurs",
+    "isGoingToDisplay": "Afficher",
+    "durationDisplay": "Durée d'affichage (s)",
+    "gridHeight": "Hauteur de la grille",
+    "gridWidth": "Largeur de la grille",
+    "noBoxes": "Aucune box dans ce conteneur",
+    "addBox": "Ajouter une box",
+    "apply": "Appliquer",
+    "add": "Ajouter",
+    "delete": "Supprimer",
+    "content": "Contenu",
+    "choose": "-- Choisir --",
+    "emptyTag": "Balise vide",
+    "chooseGrafanaDashboard": "Choisir un dashboard Grafana",
+    "props": "Props",
+    "newProps": "Nouveau prop",
+    "addPropTitle": "Ajouter un prop",
+    "propName": "Nom du prop",
+    "propValue": "Valeur du prop",
+    "propKeyPlaceholder": "Clé",
+    "propValuePlaceholder": "Valeur",
+    "notEnoughSpace": "Pas assez de place"
+  },
+  "modal": {
+    "close": "Fermer"
+  },
+  "grafanaPicker": {
+    "selectInstance": "Sélectionnez une instance à gauche.",
+    "loading": "Chargement...",
+    "loadError": "Erreur lors du chargement",
+    "addInstance": "Ajouter",
+    "confirmDelete": "Êtes-vous sûr ?",
+    "yes": "Oui",
+    "no": "Non",
+    "confirm": "Confirmer",
+    "adding": "...",
+    "requiredFields": "Tous les champs sont requis.",
+    "namePlaceholder": "Nom",
+    "urlPlaceholder": "URL Grafana",
+    "tokenPlaceholder": "Token (glsa_...)",
+    "noDashboards": "Aucun dashboard trouvé.",
+    "error": "Erreur",
+    "deleteInstance": "Supprimer l'instance"
+  }
+}

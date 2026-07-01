@@ -1,27 +1,26 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 
 /**
  * Self-contained Grafana dashboard picker.
  *
- * Layout: two columns side-by-side inside a fixed-height panel.
- *   Left  — list of configured Grafana instances; "+" expands an inline add-form.
- *   Right — dashboards auto-loaded when an instance is selected.
+ * Layout: two columns inside a fixed-height panel.
+ *   Left  — instance list with red active accent; "+" inline add-form.
+ *   Right — dashboards auto-loaded on instance selection.
  *
- * @param {Function} onSelect - Called with (instanceId, dashboard) when the user picks a dashboard.
+ * @param {(instanceId: string, dashboard: object) => void} onSelect
  */
 export default function GrafanaPicker({ onSelect }) {
+  const t = useTranslations("grafanaPicker");
+
   const [instances, setInstances] = useState([]);
-  const [selected, setSelected] = useState(null);   // currently highlighted instance
+  const [selected, setSelected] = useState(null);
   const [dashboards, setDashboards] = useState([]);
   const [loading, setLoading] = useState(false);
   const [dashError, setDashError] = useState("");
 
-  // Id of the instance waiting for delete confirmation, or null
-  const [pendingDelete, setPendingDelete] = useState(null);
-
-  // Add-form state
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState("");
   const [url, setUrl] = useState("");
@@ -29,10 +28,11 @@ export default function GrafanaPicker({ onSelect }) {
   const [addError, setAddError] = useState("");
   const [adding, setAdding] = useState(false);
 
-  // Load instances once on mount
+  // Id of the instance awaiting delete confirmation, or null
+  const [pendingDelete, setPendingDelete] = useState(null);
+
   useEffect(() => { fetchInstances(); }, []);
 
-  // Auto-load dashboards whenever the selected instance changes
   useEffect(() => {
     if (!selected) return;
     fetchDashboards(selected.id);
@@ -43,7 +43,6 @@ export default function GrafanaPicker({ onSelect }) {
     if (!res.ok) return;
     const data = await res.json();
     setInstances(data);
-    // Pre-select the first instance so the right panel is never empty
     if (data.length > 0 && !selected) setSelected(data[0]);
   }
 
@@ -56,14 +55,14 @@ export default function GrafanaPicker({ onSelect }) {
       setDashboards(await res.json());
     } else {
       const body = await res.json().catch(() => ({}));
-      setDashError(body.error || "Erreur lors du chargement");
+      setDashError(body.error || t("loadError"));
     }
     setLoading(false);
   }
 
   async function handleAdd() {
     if (!name.trim() || !url.trim() || !token.trim()) {
-      setAddError("Tous les champs sont requis.");
+      setAddError(t("requiredFields"));
       return;
     }
     setAdding(true);
@@ -81,7 +80,7 @@ export default function GrafanaPicker({ onSelect }) {
       setSelected(inst);
     } else {
       const body = await res.json().catch(() => ({}));
-      setAddError(body.error || "Erreur");
+      setAddError(body.error || t("error"));
     }
     setAdding(false);
   }
@@ -94,39 +93,43 @@ export default function GrafanaPicker({ onSelect }) {
   }
 
   return (
-    <div className="flex gap-3 h-80">
-      {/* Left column — instances */}
-      <div className="w-44 flex flex-col gap-1 overflow-y-auto shrink-0">
+    <div className="flex gap-4 h-80">
+      {/* Left column — instance list */}
+      <div className="w-48 flex flex-col gap-1 overflow-y-auto shrink-0">
         {instances.map((inst) => (
-          <div key={inst.id} className="flex items-center gap-1">
+          <div key={inst.id} className="flex items-stretch gap-1">
             {pendingDelete === inst.id ? (
-              /* Confirmation row — replaces the instance button while pending */
-              <div className="flex items-center gap-1 flex-1">
-                <span className="text-xs text-error flex-1 truncate">Êtes-vous sûr ?</span>
+              <div className="flex items-center gap-1 flex-1 px-2 py-1 rounded-lg bg-error/10 border border-error/30">
+                <span className="text-xs text-error flex-1 truncate font-medium">
+                  {t("confirmDelete")}
+                </span>
                 <button
                   className="btn btn-error btn-xs"
                   onClick={() => handleDelete(inst.id)}
                 >
-                  Oui
+                  {t("yes")}
                 </button>
                 <button
                   className="btn btn-ghost btn-xs"
                   onClick={() => setPendingDelete(null)}
                 >
-                  Non
+                  {t("no")}
                 </button>
               </div>
             ) : (
               <>
                 <button
-                  className={`btn btn-sm flex-1 justify-start truncate ${selected?.id === inst.id ? "btn-primary" : "btn-ghost"}`}
+                  className={`flex-1 text-left px-3 py-2 rounded-lg text-sm font-medium transition-all truncate
+                    ${selected?.id === inst.id
+                      ? "bg-primary/10 text-primary border-l-4 border-primary"
+                      : "hover:bg-base-200 text-base-content border-l-4 border-transparent"}`}
                   onClick={() => setSelected(inst)}
                 >
                   {inst.name}
                 </button>
                 <button
-                  className="btn btn-ghost btn-xs text-error"
-                  aria-label="Supprimer"
+                  className="btn btn-ghost btn-xs text-error opacity-50 hover:opacity-100"
+                  aria-label={t("deleteInstance")}
                   onClick={(e) => { e.stopPropagation(); setPendingDelete(inst.id); }}
                 >
                   ✕
@@ -136,33 +139,33 @@ export default function GrafanaPicker({ onSelect }) {
           </div>
         ))}
 
-        {/* Add-instance button */}
+        {/* Add instance */}
         <button
-          className="btn btn-outline btn-sm gap-1 mt-1"
+          className="flex items-center gap-2 px-3 py-2 mt-1 rounded-lg text-sm text-primary border border-dashed border-primary/40 hover:bg-primary/5 transition-colors"
           onClick={() => setShowForm((v) => !v)}
         >
-          <span className="text-lg leading-none">+</span>
-          Ajouter
+          <span className="font-bold text-base leading-none">+</span>
+          {t("addInstance")}
         </button>
 
         {showForm && (
-          <div className="flex flex-col gap-1 mt-1 p-2 bg-base-200 rounded-lg">
+          <div className="flex flex-col gap-2 mt-1 p-3 bg-base-200 rounded-xl border border-base-300">
             <input
-              className="input input-bordered input-xs w-full"
-              placeholder="Nom"
+              className="input input-bordered input-xs w-full focus:border-primary"
+              placeholder={t("namePlaceholder")}
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
             <input
-              className="input input-bordered input-xs w-full"
-              placeholder="URL Grafana"
+              className="input input-bordered input-xs w-full focus:border-primary"
+              placeholder={t("urlPlaceholder")}
               value={url}
               onChange={(e) => setUrl(e.target.value)}
             />
             <input
-              className="input input-bordered input-xs w-full"
+              className="input input-bordered input-xs w-full focus:border-primary"
               type="password"
-              placeholder="Token (glsa_...)"
+              placeholder={t("tokenPlaceholder")}
               value={token}
               onChange={(e) => setToken(e.target.value)}
             />
@@ -172,37 +175,40 @@ export default function GrafanaPicker({ onSelect }) {
               onClick={handleAdd}
               disabled={adding}
             >
-              {adding ? "..." : "Confirmer"}
+              {adding ? t("adding") : t("confirm")}
             </button>
           </div>
         )}
       </div>
 
-      {/* Divider */}
+      {/* Vertical divider */}
       <div className="w-px bg-base-300 shrink-0" />
 
-      {/* Right column — dashboards */}
+      {/* Right column — dashboard list */}
       <div className="flex-1 overflow-y-auto">
         {!selected && (
-          <p className="text-sm text-gray-400 mt-2">Sélectionnez une instance à gauche.</p>
+          <p className="text-sm text-base-content/40 mt-3 px-1">{t("selectInstance")}</p>
         )}
         {selected && loading && (
-          <p className="text-sm text-gray-400 mt-2">Chargement...</p>
+          <div className="flex items-center gap-2 mt-3 px-1 text-sm text-base-content/50">
+            <span className="loading loading-spinner loading-xs" />
+            {t("loading")}
+          </div>
         )}
         {selected && dashError && (
-          <p className="text-error text-sm mt-2">{dashError}</p>
+          <p className="text-error text-sm mt-3 px-1">{dashError}</p>
         )}
         {dashboards.map((d) => (
           <button
             key={d.uid}
-            className="btn btn-ghost btn-sm w-full justify-start truncate"
+            className="w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-base-200 transition-colors truncate text-base-content"
             onClick={() => onSelect(selected.id, d)}
           >
             {d.title}
           </button>
         ))}
         {selected && !loading && !dashError && dashboards.length === 0 && (
-          <p className="text-sm text-gray-400 mt-2">Aucun dashboard trouvé.</p>
+          <p className="text-sm text-base-content/40 mt-3 px-1">{t("noDashboards")}</p>
         )}
       </div>
     </div>
