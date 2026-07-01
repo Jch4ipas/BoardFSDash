@@ -3,6 +3,7 @@ import NasaMedia from "@/services/infonasa";
 import LatestWordPressVersion from "@/services/wordpresslastversion";
 import Salleinfo from "@/services/Salleinfo";
 import NextFreeze from "@/components/freeze";
+import GrafanaPanel from "@/components/GrafanaPanel";
 
 export const registry = {
   Clock,
@@ -10,6 +11,7 @@ export const registry = {
   LatestWordPressVersion,
   Salleinfo,
   NextFreeze,
+  GrafanaPanel,
   "": () => <></>,
   iframe: (props) => <iframe {...props} />,
 };

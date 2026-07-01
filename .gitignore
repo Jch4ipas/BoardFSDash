@@ -32,6 +32,9 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# Grafana instances (contient des tokens secrets)
+data/grafana-instances.json
+
 
 # vercel
 .vercel

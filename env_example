@@ -7,3 +7,4 @@ AUTH_MICROSOFT_ENTRA_ID_ID=#Here Microsoft Entra ID
 AUTH_MICROSOFT_ENTRA_ID_SECRET=#Here Microsoft Entra ID Secret
 AUTH_MICROSOFT_ENTRA_ID_ISSUER=#Here Microsoft Entra ID Issuer
 ALLOW_EXTERNAL_ACCESS= #Put true if you want to people have access out of epfl network or if you are coding and put false or anything else if you want to everybody have access
+GRAFANA_ENCRYPTION_KEY= #32-byte AES-256 key as 64 hex chars — generate with: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"

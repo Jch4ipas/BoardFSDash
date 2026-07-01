@@ -6,6 +6,7 @@ import { buildBoxes } from "@/components/buildBoxe"
 import { useState, useEffect, useRef } from "react";
 import { registry } from "@/components/registry";
 import Modal from "@/components/modal";
+import GrafanaPicker from "@/components/GrafanaPicker";
 
 export default function BackOffice() {
     const [boxe, setBoxe] = useState([]);
@@ -22,6 +23,7 @@ export default function BackOffice() {
     const [newPropValue, setNewPropValue] = useState("");
     const [draggedBoxId, setDraggedBoxId] = useState(null);
     const [hoveredBoxId, setHoveredBoxId] = useState(null);
+    const [showDashboardPicker, setShowDashboardPicker] = useState(false);
     const gridRef = useRef(null);
 
     useEffect(() => {
@@ -153,6 +155,16 @@ export default function BackOffice() {
         );
         handleUpdateContainer(updatedContainer);
     };
+    const handleSelectDashboard = (instanceId, dashboard) => {
+        const updatedBox = {
+            ...selectedBox,
+            props: { ...(selectedBox.props || {}), instanceId, dashboardUid: dashboard.uid },
+        };
+        setSelectedBox(updatedBox);
+        handleUpdateContainer(currentContainer.map(box => box.id === activeBox ? updatedBox : box));
+        setShowDashboardPicker(false);
+    };
+
     const handleDeleteProps = (key) => {
         const updatedProps = Object.entries(selectedBox.props).filter(([k]) => k !== key);
         const updatedBox = { ...selectedBox, props: Object.fromEntries(updatedProps) };
@@ -592,6 +604,15 @@ export default function BackOffice() {
                                         </select>
                                     </div>
 
+                                    {selectedBox?.type === "GrafanaPanel" && (
+                                        <button
+                                            className="btn btn-secondary btn-sm w-full"
+                                            onClick={() => setShowDashboardPicker(true)}
+                                        >
+                                            Choisir un dashboard Grafana
+                                        </button>
+                                    )}
+
                                     <div className="divider">Props</div>
                                     <div className="flex items-center gap-2">
                                         <span>New props</span>
@@ -659,7 +680,7 @@ export default function BackOffice() {
                                             </div>
                                         </div>
                                     </Modal>
-                                    <Modal
+                                                    <Modal
                                         open={showNotEnoughSpaceForNewBoxModal}
                                         title="Pas assez de place"
                                         onClose={() => {
@@ -772,6 +793,13 @@ export default function BackOffice() {
                     </div>
                 </div>
             </main>
+            <Modal
+                open={showDashboardPicker}
+                title="Choisir un dashboard Grafana"
+                onClose={() => setShowDashboardPicker(false)}
+            >
+                <GrafanaPicker onSelect={handleSelectDashboard} />
+            </Modal>
         </div>
     );
 }
