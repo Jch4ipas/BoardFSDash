@@ -1,38 +1,25 @@
-"use server";
-
-import { auth } from "@/services/auth";
-import { signOut } from "next-auth/react";
-import SessionDropdown from "@/components/sessionDropdown";
+/**
+ * Admin layout: wraps the backoffice with the EPFL header and the
+ * next-intl client provider so "use client" pages can call useTranslations().
+ *
+ * Why NextIntlClientProvider here (not root layout): i18n is backoffice-only.
+ * The public dashboard page does not use translations.
+ * https://next-intl.dev/docs/getting-started/app-router/without-i18n-routing#layout
+ */
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages } from "next-intl/server";
+import AdminHeader from "@/components/AdminHeader";
 
 export default async function AdminLayout({ children }) {
-  const session = await auth();
+  // getMessages() reads the locale from getRequestConfig (cookie-based)
+  const messages = await getMessages();
+
   return (
-    <div className="admin-layout">
-      <div>
-        <div className="navbar bg-base-100 shadow-sm text-white bg-blue-500">
-          <div className="navbar-start">
-            <div className="dropdown">
-              <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7" /> </svg>
-              </div>
-              <ul
-                tabIndex={0}
-                className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
-                <li><a href="/">Dashboard view</a></li>
-                <li><a href="/admin">BackOffice</a></li>
-                <li><a>About (not working)</a></li>
-              </ul>
-            </div>
-          </div>
-          <div className="navbar-center">
-            <a href="/admin" className="btn btn-ghost text-xl">BoardFSDash</a>
-          </div>
-          <div className="navbar-end">
-          <SessionDropdown session={session} />
-          </div>
-        </div>
+    <NextIntlClientProvider messages={messages}>
+      <div className="admin-layout min-h-screen flex flex-col bg-base-200 text-base-content" data-theme="epfl">
+        <AdminHeader />
+        <main className="flex-1">{children}</main>
       </div>
-      <main>{children}</main>
-    </div>
+    </NextIntlClientProvider>
   );
 }

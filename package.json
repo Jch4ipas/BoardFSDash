@@ -14,6 +14,7 @@
     "framer-motion": "^12.4.5",
     "next": "^15.4.0-canary.77",
     "next-auth": "^5.0.0-beta.29",
+    "next-intl": "^4.13.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "recharts": "^2.15.1",
