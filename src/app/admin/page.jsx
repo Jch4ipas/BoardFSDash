@@ -50,7 +50,12 @@ export default function BackOffice() {
     const [draggedBoxId, setDraggedBoxId] = useState(null);
     const [hoveredBoxId, setHoveredBoxId] = useState(null);
     const [showDashboardPicker, setShowDashboardPicker] = useState(false);
+    const [showSavedToast, setShowSavedToast] = useState(false);
     const gridRef = useRef(null);
+    const savedToastTimer = useRef(null);
+
+    // Clear the auto-dismiss timer if the component unmounts mid-toast.
+    useEffect(() => () => clearTimeout(savedToastTimer.current), []);
 
     useEffect(() => { handleLoad(); }, []);
 
@@ -97,7 +102,11 @@ export default function BackOffice() {
     };
 
     const handleSave = async (array) => {
-        if (await saveData(array)) alert(t("saved"));
+        if (await saveData(array)) {
+            setShowSavedToast(true);
+            clearTimeout(savedToastTimer.current);
+            savedToastTimer.current = setTimeout(() => setShowSavedToast(false), 2000);
+        }
     };
 
     const handleLoad = async () => {
@@ -665,6 +674,18 @@ export default function BackOffice() {
             >
                 <GrafanaPicker onSelect={handleSelectDashboard} />
             </Modal>
+
+            {/* Transient "saved" confirmation — top-center, auto-dismisses */}
+            {showSavedToast && (
+                <div className="toast toast-top toast-center z-[100]">
+                    <div className="alert alert-success shadow-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>{t("saved")}</span>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
