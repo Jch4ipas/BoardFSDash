@@ -1,118 +1,97 @@
 "use client";
 
 import { loadData } from "@/services/loadJSON";
-import { buildBoxes } from "@/components/buildBoxe"
-import { useState, useEffect } from "react";
-import NasaMedia from "@/services/infonasa";
-import Clock from "@/components/Clock";
-import LatestWordPressVersion from "@/services/wordpresslastversion";
-import NextFreeze from "@/components/freeze";
-import Salleinfo from "@/services/Salleinfo";
-import { all } from "axios";
-import './globals.css';
+import { buildBoxes } from "@/components/buildBoxe";
+import { useState, useEffect, useMemo } from "react";
+import "./globals.css";
 
+/**
+ * Public rotating dashboard.
+ *
+ * All containers flagged `isGoingToDisplay` are mounted at once and kept
+ * alive; only the active one is visible (opacity/z-index toggle). This
+ * pre-loads every Grafana iframe in the background at startup, so a heavy
+ * dashboard is already rendered by the time the rotation reaches it —
+ * instead of starting its ~20s load only once it becomes visible.
+ */
 export default function Home() {
+  const [boxSerializable, setBoxSerializable] = useState([]);
+  const [activeBoxSet, setActiveBoxSet] = useState(0);
 
-  const [ boxSerializable, setBoxSerializable ] = useState([]);
-  const [ isLoaded, setIsLoaded ] = useState(false);
-  const [ allBoxSets, setAllBoxSets ] = useState([]);
-  const [ activeBoxSet, setActiveBoxSet ] = useState(0);
-  const [ durationDisplayCurrentContainer, setDurationDisplayCurrentContainer ] = useState(30);
-  const [ refreshItem, setRefreshItem ] = useState(0);
-  const [ selectedContainer, setSelectedContainer ] = useState([]);
+  const handleLoad = async () => setBoxSerializable(await loadData());
 
   useEffect(() => {
     handleLoad();
   }, []);
-  const handleLoad = async () => {
-      const res = await loadData();
-      setBoxSerializable(res);
-      setIsLoaded(true);
-  }
-  useEffect(() => {
-    if (isLoaded) {
-      const displayableContainers = boxSerializable.filter(container => container.isGoingToDisplay == true);
-      const boxdisplay = displayableContainers.map((container, index) => index);
-      setAllBoxSets(boxdisplay);
-      const theBoxe = displayableContainers[boxdisplay[activeBoxSet]];
-      setSelectedContainer(theBoxe ? buildBoxes(theBoxe.boxes) : []);
-      setDurationDisplayCurrentContainer(theBoxe?.durationDisplay || 30);
-    }
-  }, [isLoaded, boxSerializable, activeBoxSet])
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setActiveBoxSet((prev) => (prev + 1) % allBoxSets.length);
-    }, durationDisplayCurrentContainer * 1000);
 
-    return () => clearInterval(intervalId);
-  }, [durationDisplayCurrentContainer]);
-
-  useEffect(() => {
-    const refreshInterval = setInterval(() => {
-      setRefreshItem(prev => prev + 1);
-    }, 5 * 60 * 1000);
-
-    return () => clearInterval(refreshInterval);
-  }, []);
+  // Live reload when the backoffice pushes a config change.
   useEffect(() => {
     const evt = new EventSource("/api/events");
     evt.onmessage = (event) => {
-      if (event.data === "update") {
-        handleLoad();
-      }
+      if (event.data === "update") handleLoad();
     };
     return () => evt.close();
-}, []);
+  }, []);
 
-  const box1 = [
-    { id: 1, width: 2, height: 4, content: <iframe key={refreshItem} src="https://actu.epfl.ch/?dashboardfr" className="w-full h-full"></iframe>},
-    { id: 2, width: 2, height: 1, content: <Salleinfo room={"INN011"}></Salleinfo>  },
-    { id: 3, width: 1, height: 1, content: <LatestWordPressVersion></LatestWordPressVersion>},
-    { id: 4, width: 1, height: 1, content: <Clock></Clock> },
-    { id: 5, width: 2, height: 1, content: <Salleinfo room={"INN033"}></Salleinfo>  },
-    { id: 6, width: 2, height: 2, content: <NasaMedia></NasaMedia> },
-    { id: 7, width: 2, height: 1, content: <Salleinfo room={"INN041"}></Salleinfo>},
-    { id: 8, width: 1, height: 1},
-    { id: 9, width: 1, height: 1, content: <></>},
-    { id: 10, width: 2, height: 1, content: <NextFreeze></NextFreeze>},
-  ];
+  // Displayable containers, with their boxes built once. Memoized so the
+  // iframes keep their identity across renders — this is what prevents the
+  // heavy Grafana dashboards from reloading (and keeps them pre-loaded).
+  const displayContainers = useMemo(
+    () =>
+      boxSerializable
+        .filter((container) => container.isGoingToDisplay === true)
+        .map((container) => ({ ...container, builtBoxes: buildBoxes(container.boxes) })),
+    [boxSerializable],
+  );
 
-  const box2 = [
-    { id: 1, width: 5, height: 1, content: <video autoplay muted loop id="myVideo"></video>  },
-    { id: 2, width: 1, height: 1, content: <Clock></Clock>},
-    { id: 3, width: 6, height: 3, content: <h1>WPN</h1>},
-  ];
-    const box3 = [
-    { id: 1, width: 6, height: 4, content: <iframe src="https://sdesk-monitoring.epfl.ch/" className="w-full h-full"></iframe>  }
-  ];
-  // useEffect(() => {
-  //   if (isLoaded) {
-  //     const theBoxe = boxSerializable[allBoxSets[activeBoxSet]];
-  //     // setSelectedContainer(theBoxe);
-  //     console.table(theBoxe)
-  //     setSelectedContainer(buildBoxes(theBoxe.boxes));
-  //   }
-  // }, [isLoaded, activeBoxSet]);
+  // Keep the active index valid if the set shrinks.
+  useEffect(() => {
+    if (activeBoxSet >= displayContainers.length && displayContainers.length > 0) {
+      setActiveBoxSet(0);
+    }
+  }, [displayContainers.length, activeBoxSet]);
 
+  // Rotate to the next container after the current one's display duration.
+  const activeDuration = displayContainers[activeBoxSet]?.durationDisplay || 30;
+  useEffect(() => {
+    if (displayContainers.length <= 1) return;
+    const timeoutId = setTimeout(() => {
+      setActiveBoxSet((prev) => (prev + 1) % displayContainers.length);
+    }, activeDuration * 1000);
+    return () => clearTimeout(timeoutId);
+  }, [activeBoxSet, activeDuration, displayContainers.length]);
 
   return (
-      <div className="h-screen w-full home-page">
-        <div className="grid grid-cols-6 grid-rows-4 gap-2 w-full h-full p-2">
-          {Array.isArray(selectedContainer) && selectedContainer.map((box) => (
-            <div
-              key={box.id}
-              className={`border border-gray-600 rounded-3xl justify-center items-center font-bold shadow-md p-2`}
-              style={{
-                gridColumn: `${box.x} / span ${box.width}`,
-                gridRow: `${box.y} / span ${box.height}`,
-              }}
-            >
-              <div className="w-full h-full flex items-center justify-center overflow-hidden rounded-2xl">
-                {box.content}
-              </div>
+    <div className="relative h-screen w-full home-page overflow-hidden">
+      {displayContainers.map((container, index) => {
+        const isActive = index === activeBoxSet;
+        return (
+          <div
+            key={container.id}
+            aria-hidden={!isActive}
+            className={`absolute inset-0 transition-opacity duration-700 ${
+              isActive ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
+            }`}
+          >
+            <div className="grid grid-cols-6 grid-rows-4 gap-2 w-full h-full p-2">
+              {container.builtBoxes.map((box) => (
+                <div
+                  key={box.id}
+                  className="border border-gray-600 rounded-3xl justify-center items-center font-bold shadow-md p-2"
+                  style={{
+                    gridColumn: `${box.x} / span ${box.width}`,
+                    gridRow: `${box.y} / span ${box.height}`,
+                  }}
+                >
+                  <div className="w-full h-full flex items-center justify-center overflow-hidden rounded-2xl">
+                    {box.content}
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </div>
+          </div>
+        );
+      })}
+    </div>
   );
 }
