@@ -33,7 +33,12 @@
     "propValue": "Valeur du prop",
     "propKeyPlaceholder": "Clé",
     "propValuePlaceholder": "Valeur",
-    "notEnoughSpace": "Pas assez de place"
+    "notEnoughSpace": "Pas assez de place",
+    "conflictTitle": "Conflit de sauvegarde",
+    "conflictBody": "La configuration a été modifiée par quelqu'un d'autre depuis ton chargement. Recharge pour récupérer la dernière version — tes modifications non enregistrées seront perdues.",
+    "externalChange": "La configuration vient d'être modifiée par quelqu'un d'autre.",
+    "reload": "Recharger",
+    "dismiss": "Fermer"
   },
   "modal": {
     "close": "Fermer"

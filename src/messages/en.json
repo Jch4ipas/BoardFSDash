@@ -33,7 +33,12 @@
     "propValue": "Prop value",
     "propKeyPlaceholder": "Key",
     "propValuePlaceholder": "Value",
-    "notEnoughSpace": "Not enough space"
+    "notEnoughSpace": "Not enough space",
+    "conflictTitle": "Save conflict",
+    "conflictBody": "The configuration was changed by someone else since you loaded it. Reload to get the latest version — your unsaved changes will be lost.",
+    "externalChange": "The configuration was just modified by someone else.",
+    "reload": "Reload",
+    "dismiss": "Dismiss"
   },
   "modal": {
     "close": "Close"

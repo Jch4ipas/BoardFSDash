@@ -51,13 +51,34 @@ export default function BackOffice() {
     const [hoveredBoxId, setHoveredBoxId] = useState(null);
     const [showDashboardPicker, setShowDashboardPicker] = useState(false);
     const [showSavedToast, setShowSavedToast] = useState(false);
+    const [showConflictModal, setShowConflictModal] = useState(false);
+    const [externalChange, setExternalChange] = useState(false);
     const gridRef = useRef(null);
     const savedToastTimer = useRef(null);
+    // Config version (ETag) from the last load/save, for optimistic concurrency.
+    // Kept in a ref so the SSE listener always compares against the latest value.
+    const versionRef = useRef(null);
 
     // Clear the auto-dismiss timer if the component unmounts mid-toast.
     useEffect(() => () => clearTimeout(savedToastTimer.current), []);
 
     useEffect(() => { handleLoad(); }, []);
+
+    // Warn (don't clobber) when someone else saves the config while editing.
+    // The existing SSE channel fires "update" on every save; we then re-check
+    // the version and only flag a banner if it differs from ours.
+    useEffect(() => {
+        const evt = new EventSource("/api/events");
+        evt.onmessage = async (event) => {
+            if (event.data !== "update") return;
+            try {
+                const res = await fetch("/api/jsonConfig");
+                const latest = res.headers.get("ETag");
+                if (latest && latest !== versionRef.current) setExternalChange(true);
+            } catch { /* ignore transient fetch errors */ }
+        };
+        return () => evt.close();
+    }, []);
 
     useEffect(() => {
         if (boxSerializable.length > selectedContainer) {
@@ -102,17 +123,24 @@ export default function BackOffice() {
     };
 
     const handleSave = async (array) => {
-        if (await saveData(array)) {
+        const res = await saveData(array, versionRef.current);
+        if (res.ok) {
+            versionRef.current = res.version;
+            setExternalChange(false);
             setShowSavedToast(true);
             clearTimeout(savedToastTimer.current);
             savedToastTimer.current = setTimeout(() => setShowSavedToast(false), 2000);
+        } else if (res.conflict) {
+            setShowConflictModal(true);
         }
     };
 
     const handleLoad = async () => {
-        const res = await loadData();
-        setBoxSerializable(res);
-        setBoxe(buildBoxes(res));
+        const { data, version } = await loadData();
+        versionRef.current = version;
+        setExternalChange(false);
+        setBoxSerializable(data);
+        setBoxe(buildBoxes(data));
     };
 
     const handleUpdateContainer = async (thecurrentcontainer) => {
@@ -295,6 +323,22 @@ export default function BackOffice() {
 
     return (
         <div className="min-h-screen flex flex-col bg-base-200">
+            {/* External-change banner — someone else saved while editing */}
+            {externalChange && (
+                <div className="flex items-center gap-3 px-4 py-2 bg-warning/15 border-b border-warning text-warning-content text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 shrink-0 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M4.93 19h14.14a2 2 0 001.74-3l-7.07-12a2 2 0 00-3.48 0L3.19 16a2 2 0 001.74 3z" />
+                    </svg>
+                    <span className="flex-1 text-base-content">{t("externalChange")}</span>
+                    <button className="btn btn-sm btn-warning" onClick={handleLoad}>
+                        {t("reload")}
+                    </button>
+                    <button className="btn btn-sm btn-ghost" onClick={() => setExternalChange(false)} aria-label={t("dismiss")}>
+                        ✕
+                    </button>
+                </div>
+            )}
+
             {/* ── Toolbar ── */}
             <div className="h-14 flex items-center gap-2 px-4 bg-base-100 border-b border-epfl-perle shadow-sm">
                 {/* New container */}
@@ -673,6 +717,23 @@ export default function BackOffice() {
                 onClose={() => setShowDashboardPicker(false)}
             >
                 <GrafanaPicker onSelect={handleSelectDashboard} />
+            </Modal>
+
+            {/* Save rejected: the config changed since it was loaded */}
+            <Modal
+                open={showConflictModal}
+                title={t("conflictTitle")}
+                onClose={() => setShowConflictModal(false)}
+            >
+                <div className="flex flex-col gap-4">
+                    <p className="text-sm text-base-content/70">{t("conflictBody")}</p>
+                    <button
+                        className="btn btn-primary btn-sm self-end"
+                        onClick={() => { setShowConflictModal(false); handleLoad(); }}
+                    >
+                        {t("reload")}
+                    </button>
+                </div>
             </Modal>
 
             {/* Transient "saved" confirmation — top-center, auto-dismisses */}

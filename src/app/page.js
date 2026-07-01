@@ -18,7 +18,10 @@ export default function Home() {
   const [boxSerializable, setBoxSerializable] = useState([]);
   const [activeBoxSet, setActiveBoxSet] = useState(0);
 
-  const handleLoad = async () => setBoxSerializable(await loadData());
+  const handleLoad = async () => {
+    const { data } = await loadData();
+    setBoxSerializable(data);
+  };
 
   useEffect(() => {
     handleLoad();
