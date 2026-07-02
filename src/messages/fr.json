@@ -26,6 +26,7 @@
     "choose": "-- Choisir --",
     "emptyTag": "Balise vide",
     "chooseGrafanaDashboard": "Choisir un dashboard Grafana",
+    "chooseRestaurant": "Restaurants (rotation)",
     "props": "Props",
     "newProps": "Nouveau prop",
     "addPropTitle": "Ajouter un prop",

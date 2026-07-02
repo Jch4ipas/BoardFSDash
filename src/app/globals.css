@@ -88,3 +88,21 @@ body {
   color: white;
   min-height: 100vh;
 }
+
+/* Carousel transition used when EpflRestaurants rotates to the next
+   restaurant: the new card enters from the right while the old one leaves
+   to the left. */
+@keyframes carouselEnterRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+@keyframes carouselExitLeft {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+.carousel-enter-right {
+  animation: carouselEnterRight 0.5s ease-out;
+}
+.carousel-exit-left {
+  animation: carouselExitLeft 0.5s ease-out forwards;
+}

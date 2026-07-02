@@ -5,6 +5,7 @@ import Salleinfo from "@/services/Salleinfo";
 import NextFreeze from "@/components/freeze";
 import GrafanaPanel from "@/components/GrafanaPanel";
 import EpflNews from "@/components/EpflNews";
+import EpflRestaurants from "@/components/EpflRestaurants";
 
 export const registry = {
   Clock,
@@ -14,6 +15,7 @@ export const registry = {
   NextFreeze,
   GrafanaPanel,
   EpflNews,
+  EpflRestaurants,
   "": () => <></>,
   iframe: (props) => <iframe {...props} />,
 };

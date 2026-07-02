@@ -8,6 +8,7 @@ import { useTranslations } from "next-intl";
 import { registry } from "@/components/registry";
 import Modal from "@/components/modal";
 import GrafanaPicker from "@/components/GrafanaPicker";
+import RestaurantSelect from "@/components/RestaurantSelect";
 
 /** Shared EPFL input styling — flat field with a primary focus border. */
 const inputClass = "input input-bordered input-sm w-full focus:border-primary";
@@ -220,6 +221,15 @@ export default function BackOffice() {
         setSelectedBox(updatedBox);
         handleUpdateContainer(currentContainer.map(box => box.id === activeBox ? updatedBox : box));
         setShowDashboardPicker(false);
+    };
+
+    const handleSelectRestaurant = (list) => {
+        const nextProps = { ...(selectedBox.props || {}) };
+        if (Array.isArray(list) && list.length > 0) nextProps.restaurant = list;
+        else delete nextProps.restaurant;
+        const updatedBox = { ...selectedBox, props: nextProps };
+        setSelectedBox(updatedBox);
+        handleUpdateContainer(currentContainer.map(box => box.id === activeBox ? updatedBox : box));
     };
 
     const handleDeleteProps = (key) => {
@@ -537,6 +547,15 @@ export default function BackOffice() {
                                         >
                                             {t("chooseGrafanaDashboard")}
                                         </button>
+                                    )}
+
+                                    {selectedBox?.type === "EpflRestaurants" && (
+                                        <Field label={t("chooseRestaurant")}>
+                                            <RestaurantSelect
+                                                value={selectedBox?.props?.restaurant || ""}
+                                                onChange={handleSelectRestaurant}
+                                            />
+                                        </Field>
                                     )}
 
                                     {/* Props */}
