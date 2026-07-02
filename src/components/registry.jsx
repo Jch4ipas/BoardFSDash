@@ -4,6 +4,7 @@ import LatestWordPressVersion from "@/services/wordpresslastversion";
 import Salleinfo from "@/services/Salleinfo";
 import NextFreeze from "@/components/freeze";
 import GrafanaPanel from "@/components/GrafanaPanel";
+import EpflNews from "@/components/EpflNews";
 
 export const registry = {
   Clock,
@@ -12,6 +13,7 @@ export const registry = {
   Salleinfo,
   NextFreeze,
   GrafanaPanel,
+  EpflNews,
   "": () => <></>,
   iframe: (props) => <iframe {...props} />,
 };
