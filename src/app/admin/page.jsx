@@ -72,8 +72,8 @@ export default function BackOffice() {
         evt.onmessage = async (event) => {
             if (event.data !== "update") return;
             try {
-                const res = await fetch("/api/jsonConfig");
-                const latest = res.headers.get("ETag");
+                const res = await fetch("/api/jsonConfig", { cache: "no-store" });
+                const { version: latest } = await res.json();
                 if (latest && latest !== versionRef.current) setExternalChange(true);
             } catch { /* ignore transient fetch errors */ }
         };
