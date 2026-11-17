@@ -51,14 +51,10 @@ App will be available at [http://localhost:3000](http://localhost:3000)
 
 ---
 
-### 3. Deploy with Ansible
+### 3. Set up the TV kiosk with Ansible
 
-1. Edit [`inventory/prod.yml`](Ansible/inventory/prod.yml) to add your server address.  
-2. Run the playbook:
-
-```
-./dashboardsible
-```
+Ansible configures the Raspberry Pi (FullPageOS) that displays the dashboard
+on a TV; it does not deploy the app. See [`Ansible/README.md`](Ansible/README.md).
 
 ---
 
