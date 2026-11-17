@@ -62,6 +62,6 @@ current setup; do not use them:
 
 
 [Ansible]: https://www.ansible.com
-[suitcase]: https://github.com/epfl-si/ansible.suitcase
+[suitcase]: https://github.com/EPFL-CePro/ansible.suitcase
 [FullPageOS]: https://github.com/guysoft/FullPageOS
 [Raspberry Pi Imager]: https://www.raspberrypi.com/software/
